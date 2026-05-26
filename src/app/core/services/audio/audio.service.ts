@@ -14,6 +14,16 @@ export class AudioService {
     this.isBrowser = isPlatformBrowser(this.platformId);
     if (this.isBrowser) {
       this.isMuted = localStorage.getItem('pokedex_audio_muted') === 'true';
+      
+      const resumeAudio = () => {
+        if (this.audioCtx && this.audioCtx.state === 'suspended') {
+          this.audioCtx.resume();
+        }
+        document.removeEventListener('click', resumeAudio);
+        document.removeEventListener('keydown', resumeAudio);
+      };
+      document.addEventListener('click', resumeAudio);
+      document.addEventListener('keydown', resumeAudio);
     }
   }
 
@@ -73,7 +83,7 @@ export class AudioService {
       filter.frequency.setValueAtTime(3500, now);
 
       const noiseGain = ctx.createGain();
-      noiseGain.gain.setValueAtTime(0.015, now);
+      noiseGain.gain.setValueAtTime(0.15, now);
       noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
 
       noiseSource.connect(filter);
@@ -89,7 +99,7 @@ export class AudioService {
       osc.frequency.setValueAtTime(1400, now);
       osc.frequency.exponentialRampToValueAtTime(700, now + 0.02);
 
-      gain.gain.setValueAtTime(0.02, now);
+      gain.gain.setValueAtTime(0.15, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
 
       osc.connect(gain);
@@ -129,7 +139,7 @@ export class AudioService {
       filter.frequency.exponentialRampToValueAtTime(1200, now + duration);
       filter.Q.setValueAtTime(1.5, now);
 
-      gain.gain.setValueAtTime(0.03, now);
+      gain.gain.setValueAtTime(0.18, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
       osc1.connect(filter);
@@ -164,7 +174,7 @@ export class AudioService {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, now + index * delayTime);
         
-        gain.gain.setValueAtTime(0.02, now + index * delayTime);
+        gain.gain.setValueAtTime(0.15, now + index * delayTime);
         gain.gain.exponentialRampToValueAtTime(0.001, now + index * delayTime + 0.22);
         
         osc.connect(gain);
@@ -179,7 +189,7 @@ export class AudioService {
         echoOsc.type = 'sine';
         echoOsc.frequency.setValueAtTime(freq, now + index * delayTime + 0.08);
         
-        echoGain.gain.setValueAtTime(0.006, now + index * delayTime + 0.08);
+        echoGain.gain.setValueAtTime(0.05, now + index * delayTime + 0.08);
         echoGain.gain.exponentialRampToValueAtTime(0.001, now + index * delayTime + 0.08 + 0.15);
         
         echoOsc.connect(echoGain);
@@ -226,7 +236,7 @@ export class AudioService {
         lfo.connect(lfoGain);
         lfoGain.connect(osc.frequency);
         
-        gain.gain.setValueAtTime(0.015, now);
+        gain.gain.setValueAtTime(0.15, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
 
         osc.connect(gain);
@@ -256,7 +266,7 @@ export class AudioService {
         filter.Q.setValueAtTime(2.0, now);
 
         const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.setValueAtTime(0.25, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
         noiseSource.connect(filter);
@@ -271,7 +281,7 @@ export class AudioService {
         subOsc.type = 'triangle';
         subOsc.frequency.setValueAtTime(120, now);
         subOsc.frequency.linearRampToValueAtTime(30, now + 0.15);
-        subGain.gain.setValueAtTime(0.04, now);
+        subGain.gain.setValueAtTime(0.20, now);
         subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
 
         subOsc.connect(subGain);
@@ -301,7 +311,7 @@ export class AudioService {
 
         // Modulate volume
         const mainGainNode = ctx.createGain();
-        mainGainNode.gain.setValueAtTime(0.015, now);
+        mainGainNode.gain.setValueAtTime(0.15, now);
         mainGainNode.gain.linearRampToValueAtTime(0.001, now + duration);
 
         tremolo.connect(tremoloGain);
@@ -329,7 +339,7 @@ export class AudioService {
           osc.type = 'square';
           osc.frequency.setValueAtTime(freq, now + idx * step);
 
-          gain.gain.setValueAtTime(0.012, now + idx * step);
+          gain.gain.setValueAtTime(0.12, now + idx * step);
           gain.gain.exponentialRampToValueAtTime(0.001, now + idx * step + 0.15);
 
           osc.connect(gain);
@@ -354,7 +364,7 @@ export class AudioService {
         holdLfo.connect(holdLfoGain);
         holdLfoGain.connect(holdOsc.frequency);
 
-        holdGain.gain.setValueAtTime(0.01, now + notes.length * step);
+        holdGain.gain.setValueAtTime(0.10, now + notes.length * step);
         holdGain.gain.exponentialRampToValueAtTime(0.001, now + notes.length * step + 0.35);
 
         holdOsc.connect(holdGain);
@@ -379,7 +389,7 @@ export class AudioService {
         osc2.frequency.setValueAtTime(257, now);
         osc2.frequency.exponentialRampToValueAtTime(64, now + duration);
 
-        gain.gain.setValueAtTime(0.018, now);
+        gain.gain.setValueAtTime(0.18, now);
         gain.gain.linearRampToValueAtTime(0.001, now + duration);
 
         osc1.connect(gain);
