@@ -494,11 +494,13 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       this.myDeck = await this.pokeapi.getRandomPokemonCards(7);
     }
 
-    // Fill up to 7 cards if needed
-    if (this.myDeck.length < 7) {
+    // Fill up to 7 cards if needed (using duplicates of chosen cards for fallback)
+    if (this.myDeck.length < 7 && this.myDeck.length > 0) {
       const missing = 7 - this.myDeck.length;
-      const extras = await this.pokeapi.getRandomPokemonCards(missing);
-      this.myDeck.push(...extras);
+      for (let i = 0; i < missing; i++) {
+        const randomCard = this.myDeck[Math.floor(Math.random() * this.myDeck.length)];
+        this.myDeck.push(JSON.parse(JSON.stringify(randomCard)));
+      }
     }
 
     // AI deck
@@ -605,10 +607,12 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     } else {
       hDeck = await this.pokeapi.getRandomPokemonCards(7);
     }
-    if (hDeck.length < 7) {
+    if (hDeck.length < 7 && hDeck.length > 0) {
       const missing = 7 - hDeck.length;
-      const extras = await this.pokeapi.getRandomPokemonCards(missing);
-      hDeck.push(...extras);
+      for (let i = 0; i < missing; i++) {
+        const randomCard = hDeck[Math.floor(Math.random() * hDeck.length)];
+        hDeck.push(JSON.parse(JSON.stringify(randomCard)));
+      }
     }
 
     let gDeck: PokemonCard[] = [];
@@ -618,10 +622,12 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     } else {
       gDeck = await this.pokeapi.getRandomPokemonCards(7);
     }
-    if (gDeck.length < 7) {
+    if (gDeck.length < 7 && gDeck.length > 0) {
       const missing = 7 - gDeck.length;
-      const extras = await this.pokeapi.getRandomPokemonCards(missing);
-      gDeck.push(...extras);
+      for (let i = 0; i < missing; i++) {
+        const randomCard = gDeck[Math.floor(Math.random() * gDeck.length)];
+        gDeck.push(JSON.parse(JSON.stringify(randomCard)));
+      }
     }
 
     // Shuffle
@@ -1072,39 +1078,33 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
   // --- COMBAT MATHEMATICS ---
 
-  private calculateCombatAssistance(owner: 'player' | 'enemy', targetIdx: number): { power: number, logMsg: string } {
-    const field = owner === 'player' ? this.myField : this.enemyField;
-    const targetSlot = field[targetIdx];
-    if (!targetSlot) return { power: 0, logMsg: '' };
+  calculateDamage(attacker: FieldSlot, defender: FieldSlot): { dmg: number, multiplier: number } {
+    let multiplier = 1;
+    const typeA = attacker.card.types[0]?.toLowerCase();
+    const typeD = defender.card.types[0]?.toLowerCase();
 
-    const targetVal = targetSlot.position === 'ATK' ? targetSlot.currentAtk : targetSlot.currentDef;
-    let helpPower = 0;
-    let logMsg = '';
+    // Ventajas elementales
+    if (typeA === 'water' && typeD === 'fire') multiplier = 2;
+    if (typeA === 'fire' && typeD === 'grass') multiplier = 2;
+    if (typeA === 'grass' && typeD === 'water') multiplier = 2;
+    if (typeA === 'electric' && typeD === 'water') multiplier = 2;
+    if (typeA === 'psychic' && typeD === 'poison') multiplier = 2;
 
-    if (targetIdx === 0) {
-      // Slot ATK es atacado: slot DEF (index 1) asiste con su DEF
-      const defCard = field[1];
-      if (defCard) {
-        helpPower = defCard.currentDef;
-        logMsg = owner === 'player'
-          ? `🛡️ [Cobertura Defensiva] Tu defensor ${defCard.card.name} te asiste sumando +${helpPower} DEF a tu ${targetSlot.card.name}.`
-          : `🛡️ [Cobertura Defensiva] El defensor rival ${defCard.card.name} asiste sumando +${helpPower} DEF a ${targetSlot.card.name}.`;
-      }
-    } else if (targetIdx === 1) {
-      // Slot DEF es atacado: slot ATK (index 0) asiste con su ATK
-      const atkCard = field[0];
-      if (atkCard) {
-        helpPower = atkCard.currentAtk;
-        logMsg = owner === 'player'
-          ? `⚔️ [Apoyo Atacante] Tu atacante ${atkCard.card.name} apoya sumando +${helpPower} ATK a tu ${targetSlot.card.name}.`
-          : `⚔️ [Apoyo Atacante] El atacante rival ${atkCard.card.name} apoya sumando +${helpPower} ATK a ${targetSlot.card.name}.`;
-      }
-    }
+    // Resistencias elementales
+    if (typeA === 'fire' && typeD === 'water') multiplier = 0.5;
+    if (typeA === 'grass' && typeD === 'fire') multiplier = 0.5;
+    if (typeA === 'water' && typeD === 'grass') multiplier = 0.5;
 
-    return {
-      power: targetVal + helpPower,
-      logMsg
-    };
+    let baseAttack = attacker.currentAtk * 1.5; 
+    let effDefense = defender.currentDef * 0.7;
+    
+    let dmg = Math.floor((baseAttack * multiplier) - effDefense);
+    
+    // Daño mínimo garantizado del 15% de la vida base del rival
+    const minDmg = Math.floor(defender.card.hp * 0.15) || 100;
+    if (dmg < minDmg) dmg = minDmg;
+
+    return { dmg, multiplier };
   }
 
   private executeAttack(attackerIdx: number, targetIdx: number) {
@@ -1122,36 +1122,16 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.audioService.playSynthSound('hit');
 
-      // Cálculo de asistencia de combate usando el método unificado
-      const assistance = this.calculateCombatAssistance('enemy', targetIdx);
-      if (assistance.logMsg) {
-        this.log(assistance.logMsg);
-      }
+      const { dmg, multiplier } = this.calculateDamage(attacker, target);
+      target.currentHp = Math.max(0, target.currentHp - dmg);
+      
+      let dmgMsg = `💥 ¡${attacker.card.name} inflige ${dmg} de daño a la HP de ${target.card.name}! (HP restante: ${target.currentHp})`;
+      if (multiplier === 2) dmgMsg += " (Súper Efectivo)";
+      else if (multiplier === 0.5) dmgMsg += " (Poco Efectivo)";
+      this.log(dmgMsg);
 
-      const diff = attacker.currentAtk - assistance.power;
-
-      if (diff > 0) {
-        const damage = Math.max(100, diff);
-        target.currentHp = Math.max(0, target.currentHp - damage);
-        this.log(`💥 ¡${attacker.card.name} inflige ${damage} de daño a la HP de ${target.card.name}! (HP restante: ${target.currentHp})`);
-        
-        if (target.currentHp <= 0) {
-          this.destroyEnemyMonster(targetIdx);
-        }
-      } else if (diff < 0) {
-        const bounceDamage = Math.max(100, Math.abs(diff));
-        attacker.currentHp = Math.max(0, attacker.currentHp - bounceDamage);
-        this.log(`🛡️ ¡Rebote! El ataque es repelido. ${attacker.card.name} sufre ${bounceDamage} de daño. (HP restante: ${attacker.currentHp})`);
-        
-        if (attacker.currentHp <= 0) {
-          this.destroyPlayerMonster(attackerIdx);
-        }
-      } else {
-        this.log(`¡Choque de fuerzas! Ambos Pokémon sufren daño crítico.`);
-        target.currentHp = 0;
-        attacker.currentHp = 0;
+      if (target.currentHp <= 0) {
         this.destroyEnemyMonster(targetIdx);
-        this.destroyPlayerMonster(attackerIdx);
       }
 
       this.checkVictoryOfflineOnline().then(() => {
@@ -1380,36 +1360,16 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         await this.delay(800);
         this.audioService.playSynthSound('hit');
 
-        // Cálculo de asistencia de combate usando el método unificado
-        const assistance = this.calculateCombatAssistance('player', targetIdx);
-        if (assistance.logMsg) {
-          this.log(assistance.logMsg);
-        }
+        const { dmg, multiplier } = this.calculateDamage(attacker, pTarget);
+        pTarget.currentHp = Math.max(0, pTarget.currentHp - dmg);
+        
+        let dmgMsg = `💥 ¡El rival inflige ${dmg} de daño a la HP de tu ${pTarget.card.name}! (HP restante: ${pTarget.currentHp})`;
+        if (multiplier === 2) dmgMsg += " (Súper Efectivo)";
+        else if (multiplier === 0.5) dmgMsg += " (Poco Efectivo)";
+        this.log(dmgMsg);
 
-        const diff = attacker.currentAtk - assistance.power;
-
-        if (diff > 0) {
-          const damage = Math.max(100, diff);
-          pTarget.currentHp = Math.max(0, pTarget.currentHp - damage);
-          this.log(`💥 ¡El rival inflige ${damage} de daño a la HP de tu ${pTarget.card.name}! (HP restante: ${pTarget.currentHp})`);
-          
-          if (pTarget.currentHp <= 0) {
-            this.destroyPlayerMonster(targetIdx);
-          }
-        } else if (diff < 0) {
-          const bounceDamage = Math.max(100, Math.abs(diff));
-          attacker.currentHp = Math.max(0, attacker.currentHp - bounceDamage);
-          this.log(`🛡️ ¡Rebote! Repeles el ataque. El atacante rival ${attacker.card.name} sufre ${bounceDamage} de daño. (HP restante: ${attacker.currentHp})`);
-          
-          if (attacker.currentHp <= 0) {
-            this.destroyEnemyMonster(0);
-          }
-        } else {
-          this.log(`¡Choque de fuerzas! Ambos Pokémon sufren daño crítico.`);
-          pTarget.currentHp = 0;
-          attacker.currentHp = 0;
+        if (pTarget.currentHp <= 0) {
           this.destroyPlayerMonster(targetIdx);
-          this.destroyEnemyMonster(0);
         }
       } else {
         // Direct Attack

@@ -26,8 +26,8 @@ import { AudioService } from '../../core/services/audio/audio.service';
             </button>
           </div>
           <h1 class="royal-title text-gold" style="margin: 0; font-size: 2.2rem; color: var(--pokedex-cyan); text-shadow: 0 0 10px var(--pokedex-cyan-glow);">Terminal de Forja de Mazo</h1>
-          <button class="btn-royal-gold" [disabled]="deck.length !== 5 || saving" (click)="saveDeck()" style="font-size: 0.9rem; padding: 0.5rem 1.5rem;">
-            {{ saving ? 'Sincronizando...' : 'Guardar Mazo (5/5)' }}
+          <button class="btn-royal-gold" [disabled]="deck.length !== 7 || saving" (click)="saveDeck()" style="font-size: 0.9rem; padding: 0.5rem 1.5rem;">
+            {{ saving ? 'Sincronizando...' : 'Guardar Mazo (7/7)' }}
           </button>
         </header>
 
@@ -36,12 +36,12 @@ import { AudioService } from '../../core/services/audio/audio.service';
           <!-- Lado Izquierdo: Mazo Activo (Exactly 5 cards) -->
           <div class="altar-panel" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; border-color: var(--pokedex-cyan);">
             <h2 class="royal-title text-gold" style="font-size: 1.2rem; text-align: center; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 0.5rem; margin-bottom: 1rem; color: var(--pokedex-cyan);">
-              Mazo Seleccionado ({{ deck.length }} / 5)
+              Mazo Seleccionado ({{ deck.length }} / 7)
             </h2>
             
             <div *ngIf="deck.length === 0" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 250px; border: 1px dashed rgba(0, 240, 255, 0.2); border-radius: 8px; color: var(--pokedex-steel-light);">
               <div style="font-size: 2.5rem; margin-bottom: 1rem;">🛡️</div>
-              <p style="font-style: italic; text-align: center; font-size: 0.9rem; padding: 0 1rem;">Mazo vacío. Haz clic en las tarjetas de tu base de datos a la derecha para equipar 5 Pokémon.</p>
+              <p style="font-style: italic; text-align: center; font-size: 0.9rem; padding: 0 1rem;">Mazo vacío. Haz clic en las tarjetas de tu base de datos a la derecha para equipar 7 Pokémon.</p>
             </div>
 
             <!-- Listado horizontal/vertical de cartas en el mazo -->
@@ -75,8 +75,8 @@ import { AudioService } from '../../core/services/audio/audio.service';
               </div>
             </div>
             
-            <div *ngIf="deck.length > 0 && deck.length < 5" style="color: var(--pokedex-red); font-size: 0.8rem; text-align: center; font-style: italic; font-weight: bold; margin-top: 1rem; text-shadow: 0 0 5px var(--pokedex-red-glow);">
-              * Se requieren exactamente 5 cartas para poder combatir *
+            <div *ngIf="deck.length > 0 && deck.length < 7" style="color: var(--pokedex-red); font-size: 0.8rem; text-align: center; font-style: italic; font-weight: bold; margin-top: 1rem; text-shadow: 0 0 5px var(--pokedex-red-glow);">
+              * Se requieren exactamente 7 cartas para poder combatir *
             </div>
           </div>
 
@@ -195,8 +195,8 @@ export class DeckBuilderComponent implements OnInit {
   }
 
   addToDeck(card: PokemonCard) {
-    if (this.deck.length >= 5) {
-      alert("Tu mazo ya posee el límite de 5 combatientes.");
+    if (this.deck.length >= 7) {
+      alert("Tu mazo ya posee el límite de 7 combatientes.");
       return;
     }
     if (this.isInDeck(card)) return;
@@ -213,7 +213,7 @@ export class DeckBuilderComponent implements OnInit {
   }
 
   async saveDeck() {
-    if (this.deck.length !== 5) return;
+    if (this.deck.length !== 7) return;
     this.audioService.playClick();
     this.saving = true;
     this.cdr.detectChanges();

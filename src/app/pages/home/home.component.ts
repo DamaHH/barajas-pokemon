@@ -161,7 +161,7 @@ import { AudioService } from '../../core/services/audio/audio.service';
                 <div class="menu-icon" style="color: #d97706;">⚙️</div>
                 <div class="menu-details">
                   <h3 class="menu-title">Forjar Mazo Activo</h3>
-                  <p class="menu-desc">Selecciona exactamente 5 cartas de tu colección para preparar tu mazo reglamentario de combate.</p>
+                  <p class="menu-desc">Selecciona exactamente 7 cartas de tu colección para preparar tu mazo reglamentario de combate.</p>
                 </div>
               </div>
 
@@ -200,7 +200,7 @@ import { AudioService } from '../../core/services/audio/audio.service';
           <div style="font-size: 0.85rem; line-height: 1.5; color: var(--poke-dark); min-height: 65px;">
             <p *ngIf="tutorialStep === 1">¡Hola, te doy la bienvenida a <strong>Barajas Pokémon</strong>! Soy tu asistente virtual. Te daré un breve recorrido para que aprendas a jugar rápidamente.</p>
             <p *ngIf="tutorialStep === 2">En la derecha tienes el <strong>Simulador IA</strong> y los <strong>Combates en Línea</strong>. El simulador te permite pelear localmente con la máquina. "Combates en Línea" te conecta con jugadores en tiempo real.</p>
-            <p *ngIf="tutorialStep === 3"><strong>¡Punto clave!</strong> Antes de batallar, entra a <strong>Forjar Mazo Activo</strong> para elegir las 5 cartas que usarás. Es requisito indispensable tener un mazo guardado para poder iniciar.</p>
+            <p *ngIf="tutorialStep === 3"><strong>¡Punto clave!</strong> Antes de batallar, entra a <strong>Forjar Mazo Activo</strong> para elegir las 7 cartas que usarás. Es requisito indispensable tener un mazo guardado para poder iniciar.</p>
             <p *ngIf="tutorialStep === 4">Para obtener más cartas, ve al recuadro de la izquierda: <strong>Búsqueda en Safari</strong>. Utiliza tus Safari Balls disponibles para sacudir los matorrales de la hierba alta y capturar nuevos Pokémon.</p>
             <p *ngIf="tutorialStep === 5">Finalmente, en <strong>Mi Colección</strong> podrás ver todo tu catálogo de cartas obtenidas y en <strong>Bitácora</strong> auditar tus estadísticas de victorias. ¡Mucha suerte en la arena!</p>
           </div>
