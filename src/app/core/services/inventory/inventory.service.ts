@@ -88,13 +88,13 @@ export class InventoryService {
     const { data: userAuth } = await this.supabase.auth.getUser();
     if (!userAuth.user) throw new Error("No autenticado");
 
-    if (inv.recargas < 150) {
-      throw new Error("Saldo de PokéCoins insuficiente. Cuesta 150 PokéCoins.");
+    if (inv.recargas < 100) {
+      throw new Error("Saldo de PokéCoins insuficiente. Cuesta 100 PokéCoins.");
     }
 
     await this.supabase.client.from('inventario')
       .update({
-        recargas: inv.recargas - 150,
+        recargas: inv.recargas - 100,
         sobres_disponibles: inv.sobres_disponibles + 1
       })
       .eq('id_usuario', userAuth.user.id);

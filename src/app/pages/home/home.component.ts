@@ -246,7 +246,7 @@ import { AudioService } from '../../core/services/audio/audio.service';
 
             <div>
               <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">5. PokéCoins y Recargas de Safari</h3>
-              <p>Ganarás 150 PokéCoins por cada victoria (tanto contra la IA del simulador como en duelos multijugador online). Para canjearlos por más intentos de captura, ve a la sección <strong>Hierba Alta (Safari)</strong>; en la parte inferior encontrarás el panel de canje donde podrás recargar 1 Safari Ball a cambio de 150 PokéCoins. ¡Así nunca te quedarás sin cartas!</p>
+              <p>Ganarás 50 PokéCoins por victoria contra la IA y 100 PokéCoins por victoria en línea. Para canjearlos por más intentos de captura, ve a la sección <strong>Hierba Alta (Safari)</strong>; en la parte inferior podrás recargar 1 Safari Ball a cambio de 100 PokéCoins. ¡Así nunca te quedarás sin cartas!</p>
             </div>
           </div>
 

@@ -96,10 +96,10 @@ import { AudioService } from '../../core/services/audio/audio.service';
                 ¿Sin cargas de Safari? Recarga una celda de energía para seguir buscando.
               </span>
               <button class="btn-royal-gold" 
-                      [disabled]="(inv?.recargas || 0) < 150 || (inv?.sobres_disponibles || 0) >= 3 || loading"
+                      [disabled]="(inv?.recargas || 0) < 100 || (inv?.sobres_disponibles || 0) >= 3 || loading"
                       (click)="comprarCarga()" 
                       style="font-size: 0.8rem; padding: 0.5rem 1rem; white-space: nowrap;">
-                🔌 Recargar (150 Coins)
+                🔌 Recargar (100 Coins)
               </button>
             </div>
 
@@ -274,7 +274,7 @@ export class GachaComponent implements OnInit {
   }
 
   async comprarCarga() {
-    if (!this.inv || this.inv.recargas < 150 || this.inv.sobres_disponibles >= 3) return;
+    if (!this.inv || this.inv.recargas < 100 || this.inv.sobres_disponibles >= 3) return;
     this.audioService.playClick();
     this.loading = true;
 
