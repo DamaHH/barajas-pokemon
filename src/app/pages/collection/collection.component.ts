@@ -44,35 +44,35 @@ import { AudioService } from '../../core/services/audio/audio.service';
 
         <!-- Grilla de cartas coleccionadas (Holographic Tech Cards) -->
         <div *ngIf="!loading && cards.length > 0" 
-             style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 2rem; justify-items: center; margin-top: 1rem;">
+             style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2rem; justify-items: center; margin-top: 1rem;">
           
           <div *ngFor="let card of cards" class="card-wrapper-ygo">
-            <div class="card-ygo" style="transform: none;">
+            <div class="card-ygo">
               <div class="card-face card-face-front" [ngClass]="'type-' + (card.types[0]?.toLowerCase() || 'normal')">
                 
                 <!-- Header -->
-                <div class="card-header-ygo" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; margin-bottom: 6px;">
-                  <div class="card-name-ygo" style="font-family: var(--font-title); font-size: 0.85rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 90px;">{{ card.name }}</div>
-                  <div class="card-stars-ygo" style="display: flex; align-items: center;">
-                    <span *ngIf="card.level && card.level > 1" style="background: var(--pokedex-cyan); color: #000; font-size: 0.6rem; font-weight: 900; padding: 1px 4px; border-radius: 3px; font-family: monospace;">N.{{ card.level }}</span>
-                    <span *ngIf="!card.level || card.level === 1" style="font-size: 0.65rem;">⭐</span>
+                <div class="card-header-ygo">
+                  <div class="card-name-ygo">{{ card.name }}</div>
+                  <div class="card-stars-ygo">
+                    <span *ngIf="card.level && card.level > 1" style="background: var(--pokedex-cyan); color: #000; font-size: 0.65rem; font-weight: 900; padding: 2px 5px; border-radius: 4px; font-family: monospace;">N.{{ card.level }}</span>
+                    <span *ngIf="!card.level || card.level === 1">⭐</span>
                   </div>
                 </div>
 
                 <!-- Image with Poké-Dex Tech border -->
-                <div class="card-image-ygo" style="width: 100%; height: 100px; background: rgba(0,0,0,0.4); border-radius: 6px; border: 1px solid rgba(0,240,255,0.1); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 6px; position: relative;">
-                  <img [src]="card.image" alt="Pokémon" style="max-width: 90%; max-height: 90%; object-fit: contain; filter: drop-shadow(0 0 5px rgba(255,255,255,0.25));">
+                <div class="card-image-ygo">
+                  <img [src]="card.image" alt="Pokémon" style="filter: drop-shadow(0 0 5px rgba(255,255,255,0.25));">
                 </div>
 
                 <!-- Description -->
-                <div class="card-description-ygo" style="font-size: 0.55rem; color: #94a3b8; height: 35px; overflow-y: auto; line-height: 1.3; margin-bottom: 6px; padding: 2px;">
+                <div class="card-description-ygo" style="height: 48px; overflow-y: auto; padding: 2px;">
                   {{ card.description }}
                 </div>
 
                 <!-- Stats with neon bars -->
-                <div class="card-stats-ygo" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 4px; display: flex; justify-content: space-between; font-size: 0.65rem; font-family: monospace; font-weight: bold; color: var(--pokedex-cyan);">
+                <div class="card-stats-ygo" style="color: var(--poke-red);">
                   <span>ATK: {{ card.attack }}</span>
-                  <span style="color: var(--pokedex-green);">DEF: {{ card.defense }}</span>
+                  <span style="color: var(--poke-blue);">DEF: {{ card.defense }}</span>
                 </div>
 
               </div>

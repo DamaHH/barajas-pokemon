@@ -1,6 +1,6 @@
 # Guía de Despliegue - Git y Vercel (Barajas Pokémon)
 
-Esta guía detalla los pasos sencillos para subir el código del proyecto a un repositorio de **GitHub** y publicarlo en **Vercel** usando cuentas nuevas o de terceros.
+Esta guía detalla los pasos sencillos para subir el código del proyecto a un repositorio de **GitHub** y publicarlo en **Vercel** usando la terminal.
 
 ---
 
@@ -44,38 +44,52 @@ Si deseas subir el proyecto a una nueva cuenta de GitHub, sigue estos pasos:
 
 ---
 
-## Parte 2: Desplegar en Vercel (Nueva Cuenta)
+## Parte 2: Desplegar en Vercel desde la Terminal (Paso a Paso)
 
-Vercel permite importar directamente repositorios de GitHub para realizar builds automáticas con cada cambio.
+Usaremos `npx vercel` para no tener que instalar nada globalmente en tu sistema. Asegúrate de estar dentro de la carpeta del proyecto en tu terminal.
 
-1. **Crear una cuenta en Vercel**:
-   * Ve a [vercel.com/signup](https://vercel.com/signup).
-   * Selecciona **Continue with GitHub** para que tu cuenta de Vercel quede enlazada automáticamente a tu nueva cuenta de GitHub.
+### Paso 1: Iniciar Sesión en Vercel
+Ejecuta el siguiente comando para loguearte con tu cuenta de Vercel (si no tienes cuenta, te permitirá registrarte):
+```bash
+npx vercel login
+```
+* **Qué hacer**: Selecciona tu método favorito (por ejemplo, `GitHub` si ya iniciaste sesión en la Parte 1, o `Email` para recibir un código de enlace rápido). Sigue las instrucciones del navegador.
 
-2. **Importar el proyecto**:
-   * En el panel principal de Vercel, haz clic en **Add New...** -> **Project**.
-   * Verás la lista de tus repositorios de GitHub. Busca `barajas-pokemon` y haz clic en **Import**.
+### Paso 2: Vincular el Proyecto Local
+Ejecuta el comando para inicializar el despliegue y vincular tu código:
+```bash
+npx vercel
+```
+La terminal te hará las siguientes preguntas interactivas. Responde presionando **Enter** (para aceptar los valores por defecto):
+1. `Set up and deploy "~/Cartas_Pokemon"? [Y/n]` ➡️ Escribe `y` y presiona **Enter**.
+2. `Which scope do you want to deploy to?` ➡️ Presiona **Enter** (elegirá tu nombre de usuario).
+3. `Link to existing project? [y/N]` ➡️ Presiona **Enter** (para indicar que NO, es un proyecto nuevo).
+4. `What’s your project’s name?` ➡️ Presiona **Enter** (elegirá `cartas-pokemon` o escribe `barajas-pokemon`).
+5. `In which directory is your code located?` ➡️ Presiona **Enter** (para indicar `./`).
+6. *Vercel detectará que es un proyecto Angular automáticamente.*
+7. `Want to modify these settings? [y/N]` ➡️ Presiona **Enter** (para indicar que NO).
 
-3. **Configurar las Variables de Entorno (Environment Variables)**:
-   * Antes de presionar "Deploy", despliega la sección llamada **Environment Variables** (Variables de entorno).
-   * Debes agregar exactamente las llaves de Supabase para que la app se conecte correctamente:
-     
-     * **Variable 1**:
-       * **Name**: `SUPABASE_URL`
-       * **Value**: (Tu URL de Supabase, ej. `https://jsxobmzvqeruyxbtbbml.supabase.co`)
-     
-     * **Variable 2**:
-       * **Name**: `SUPABASE_KEY`
-       * **Value**: (Tu Anon key de Supabase, ej. `sb_publishable_BcxuFDGCJZI9qNzp8fnbzQ_Su1ugvIq`)
+*Al finalizar este paso, Vercel creará el proyecto en tu cuenta pero el primer despliegue fallará o no cargará datos porque nos falta configurar las variables de Supabase.*
 
-4. **Desplegar**:
-   * Deja la configuración de Build y Framework por defecto (Vercel detecta automáticamente que es un proyecto de Angular).
-   * Haz clic en el botón **Deploy**.
-   * En 2 o 3 minutos, el proyecto estará compilado y Vercel te dará una URL pública gratuita (ej. `barajas-pokemon.vercel.app`) para jugar en línea desde cualquier dispositivo.
+### Paso 3: Configurar las Variables de Conexión en Vercel
+Debemos agregar las credenciales de Supabase mediante la consola para que las páginas funcionen. Ejecuta estos dos comandos:
 
----
+1. **Agregar URL de Supabase**:
+   ```bash
+   npx vercel env add SUPABASE_URL production
+   ```
+   * Cuando te pida `What’s the value of SUPABASE_URL?`, pega tu enlace de Supabase (ej. `https://jsxobmzvqeruyxbtbbml.supabase.co`) y presiona **Enter**.
 
-## Consejos Útiles
+2. **Agregar Llave Pública de Supabase**:
+   ```bash
+   npx vercel env add SUPABASE_KEY production
+   ```
+   * Cuando te pida `What’s the value of SUPABASE_KEY?`, pega tu Anon/Publishable key de Supabase (ej. `sb_publishable_BcxuFDGCJZI9qNzp8fnbzQ_Su1ugvIq`) y presiona **Enter**.
 
-* **Actualizaciones automáticas**: Cada vez que hagas cambios en tu computadora y ejecutes los comandos `git add .`, `git commit -m "detalles"` y `git push`, Vercel actualizará tu sitio web publicado en cuestión de segundos de forma 100% automática.
-* **Base de datos Supabase**: Si creas un nuevo proyecto en Supabase (con otra cuenta), recuerda ejecutar en la consola SQL el script `supabase_setup.sql` del proyecto local para crear las tablas necesarias (`usuarios`, `inventario`, `mazos`, `partidas`) y habilitar las políticas de seguridad (RLS) y la réplica en tiempo real.
+### Paso 4: Despliegue Final en Producción
+Ahora que las variables de entorno están guardadas, ejecuta el comando para construir y publicar la versión definitiva:
+```bash
+npx vercel --prod
+```
+* Vercel compilará la aplicación en la nube (tardará entre 1 y 2 minutos).
+* Al finalizar, la terminal te imprimirá la URL definitiva de producción (por ejemplo: `https://barajas-pokemon.vercel.app`). ¡Listo, ya puedes compartirla para jugar!

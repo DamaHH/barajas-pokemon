@@ -46,28 +46,28 @@ import { AudioService } from '../../core/services/audio/audio.service';
 
             <!-- Listado horizontal/vertical de cartas en el mazo -->
             <div *ngIf="deck.length > 0" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
-              <div *ngFor="let card of deck; let idx = index" (click)="removeFromDeck(idx)" class="card-wrapper-ygo" style="cursor: pointer; transform: scale(0.9);">
-                <div class="card-ygo" style="transform: none;">
+              <div *ngFor="let card of deck; let idx = index" (click)="removeFromDeck(idx)" class="card-wrapper-ygo" style="cursor: pointer;">
+                <div class="card-ygo">
                   <div class="card-face card-face-front" [ngClass]="'type-' + (card.types[0]?.toLowerCase() || 'normal')">
                     
-                    <div class="card-header-ygo" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; margin-bottom: 6px;">
-                      <div class="card-name-ygo" style="font-family: var(--font-title); font-size: 0.8rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80px;">{{ card.name }}</div>
+                    <div class="card-header-ygo">
+                      <div class="card-name-ygo">{{ card.name }}</div>
                       <div class="card-stars-ygo">
-                        <span style="background: var(--pokedex-cyan); color: #000; font-size: 0.55rem; font-weight: 900; padding: 1px 3px; border-radius: 3px; font-family: monospace;">N.{{ card.level || 1 }}</span>
+                        <span style="background: var(--pokedex-cyan); color: #000; font-size: 0.65rem; font-weight: 900; padding: 2px 5px; border-radius: 4px; font-family: monospace;">N.{{ card.level || 1 }}</span>
                       </div>
                     </div>
 
-                    <div class="card-image-ygo" style="height: 70px; background: rgba(0,0,0,0.4); border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 4px;">
-                      <img [src]="card.image" alt="Pokémon" style="max-width: 90%; max-height: 90%; object-fit: contain;">
+                    <div class="card-image-ygo">
+                      <img [src]="card.image" alt="Pokémon">
                     </div>
 
-                    <div class="card-description-ygo" style="font-size: 0.5rem; height: 32px; overflow-y: auto; color: #94a3b8; margin-bottom: 4px;">
+                    <div class="card-description-ygo">
                       {{ card.description }}
                     </div>
 
-                    <div class="card-stats-ygo" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 3px; display: flex; justify-content: space-between; font-size: 0.6rem; color: var(--pokedex-cyan); font-family: monospace; font-weight: bold;">
-                      <span>ATK: {{ card.attack }}</span>
-                      <span style="color: var(--pokedex-green);">DEF: {{ card.defense }}</span>
+                    <div class="card-stats-ygo">
+                      <span style="color: var(--poke-red);">ATK: {{ card.attack }}</span>
+                      <span style="color: var(--poke-blue);">DEF: {{ card.defense }}</span>
                     </div>
 
                   </div>
@@ -93,31 +93,31 @@ import { AudioService } from '../../core/services/audio/audio.service';
             <!-- Scrollable list of cards in collection -->
             <div *ngIf="collection.length > 0" style="max-height: 70vh; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; padding: 0.5rem;">
               <div *ngFor="let card of collection" (click)="addToDeck(card)" 
-                   class="card-wrapper-ygo" style="cursor: pointer; transform: scale(0.9); transition: all 0.3s;"
+                   class="card-wrapper-ygo" style="cursor: pointer; transition: all 0.3s;"
                    [style.opacity]="isInDeck(card) ? 0.25 : 1"
                    [style.pointer-events]="isInDeck(card) ? 'none' : 'auto'">
                 
-                <div class="card-ygo" style="transform: none;">
+                <div class="card-ygo">
                   <div class="card-face card-face-front" [ngClass]="'type-' + (card.types[0]?.toLowerCase() || 'normal')">
                     
-                    <div class="card-header-ygo" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; margin-bottom: 6px;">
-                      <div class="card-name-ygo" style="font-family: var(--font-title); font-size: 0.8rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80px;">{{ card.name }}</div>
+                    <div class="card-header-ygo">
+                      <div class="card-name-ygo">{{ card.name }}</div>
                       <div class="card-stars-ygo">
-                        <span style="background: var(--pokedex-cyan); color: #000; font-size: 0.55rem; font-weight: 900; padding: 1px 3px; border-radius: 3px; font-family: monospace;">N.{{ card.level || 1 }}</span>
+                        <span style="background: var(--pokedex-cyan); color: #000; font-size: 0.65rem; font-weight: 900; padding: 2px 5px; border-radius: 4px; font-family: monospace;">N.{{ card.level || 1 }}</span>
                       </div>
                     </div>
 
-                    <div class="card-image-ygo" style="height: 70px; background: rgba(0,0,0,0.4); border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 4px;">
-                      <img [src]="card.image" alt="Pokémon" style="max-width: 90%; max-height: 90%; object-fit: contain;">
+                    <div class="card-image-ygo">
+                      <img [src]="card.image" alt="Pokémon">
                     </div>
 
-                    <div class="card-description-ygo" style="font-size: 0.5rem; height: 32px; overflow-y: auto; color: #94a3b8; margin-bottom: 4px;">
+                    <div class="card-description-ygo">
                       {{ card.description }}
                     </div>
 
-                    <div class="card-stats-ygo" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 3px; display: flex; justify-content: space-between; font-size: 0.6rem; color: var(--pokedex-cyan); font-family: monospace; font-weight: bold;">
-                      <span>ATK: {{ card.attack }}</span>
-                      <span style="color: var(--pokedex-green);">DEF: {{ card.defense }}</span>
+                    <div class="card-stats-ygo">
+                      <span style="color: var(--poke-red);">ATK: {{ card.attack }}</span>
+                      <span style="color: var(--poke-blue);">DEF: {{ card.defense }}</span>
                     </div>
 
                   </div>
@@ -222,15 +222,35 @@ export class DeckBuilderComponent implements OnInit {
       const { data: userAuth } = await this.supabase.auth.getUser();
       if (!userAuth.user) throw new Error("No autenticado");
 
-      // Borrar mazo anterior e insertar el nuevo
-      await this.supabase.client.from('mazos').delete().eq('id_usuario', userAuth.user.id);
-      
-      const { error } = await this.supabase.client.from('mazos').insert({
-        id_usuario: userAuth.user.id,
-        cartas: this.deck
-      });
+      // Consultar si ya existe una entrada para este usuario para decidir entre insert o update
+      const { data: existing, error: checkError } = await this.supabase.client
+        .from('mazos')
+        .select('id_usuario')
+        .eq('id_usuario', userAuth.user.id)
+        .limit(1);
 
-      if (error) throw error;
+      if (checkError) throw checkError;
+
+      let dbError;
+      if (existing && existing.length > 0) {
+        // Si ya existe, actualizamos
+        const { error } = await this.supabase.client
+          .from('mazos')
+          .update({ cartas: this.deck })
+          .eq('id_usuario', userAuth.user.id);
+        dbError = error;
+      } else {
+        // Si no existe, insertamos
+        const { error } = await this.supabase.client
+          .from('mazos')
+          .insert({
+            id_usuario: userAuth.user.id,
+            cartas: this.deck
+          });
+        dbError = error;
+      }
+
+      if (dbError) throw dbError;
       
       this.audioService.playSynthSound('victory');
       alert("¡Tu mazo ha sido sincronizado exitosamente en la base de datos!");

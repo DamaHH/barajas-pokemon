@@ -28,10 +28,10 @@ export interface FieldSlot {
       <!-- MAIN LOADER -->
       <div *ngIf="loading" class="fullscreen-overlay">
         <div class="altar-panel loader-panel" style="background: #ffffff; border-color: var(--poke-dark);">
-          <h2 class="royal-title text-gold pulse-anim" style="color: var(--poke-blue);">Alineando los Astros...</h2>
-          <p class="loader-status" style="color: #64748b;">{{ loaderStatus }}</p>
+          <h2 class="royal-title pulse-anim" style="color: var(--poke-blue); font-weight: 900;">Alineando Arena...</h2>
+          <p class="loader-status" style="color: #64748b; font-weight: bold;">{{ loaderStatus }}</p>
           <div class="spinner-gold"></div>
-          <button *ngIf="onlineMode" (click)="exitDuel()" class="btn btn-pink" style="margin-top: 2rem;">Desistir del Duelo</button>
+          <button *ngIf="onlineMode" (click)="exitDuel()" class="btn btn-pink" style="margin-top: 2rem; font-weight: bold;">Desistir del Duelo</button>
         </div>
       </div>
 
@@ -49,7 +49,7 @@ export interface FieldSlot {
           </p>
           
           <div class="rewards-boxAltar" *ngIf="isWinner && !rewardProcessed" style="background: #f0fdf4; border: 3px solid var(--poke-dark); box-shadow: 3px 3px 0 var(--poke-dark); border-radius: 12px; margin-bottom: 1.5rem; padding: 1rem;">
-            <h3 style="font-family: var(--font-title); font-weight: 900; color: #16a34a; margin-bottom: 0.25rem;">Recompensas Obtenidas</h3>
+            <h3 style="font-family: var(--font-title); font-weight: 900; color: #16a34a; margin-bottom: 0.25rem; text-transform: uppercase;">Recompensas Obtenidas</h3>
             <p style="font-weight: bold;">+{{ recargasEarned }} PokéCoins de Oro</p>
             <p *ngIf="packEarned" class="pulse-anim" style="color: var(--poke-blue); font-weight: 900;">¡Boleto de Safari Adicional Desbloqueado!</p>
           </div>
@@ -79,16 +79,16 @@ export interface FieldSlot {
                 <div class="hud-lp-value">{{ enemyLp }} / 4000 LP</div>
               </div>
               <div class="hud-sub" style="font-weight: bold;">
-                <span>Mazo: {{ enemyDeck.length }} cartas restantes</span> | <span>Cementerio: {{ enemyGraveyard.length }}</span>
-                <span *ngIf="isDeclaringAttack() && !enemyField[0] && !enemyField[1]" class="blink-text" style="color: var(--poke-red); font-weight: 900; margin-left: 10px;">🎯 ¡HAZ CLIC AQUÍ PARA ATACAR DIRECTAMENTE!</span>
+                <span>Mazo: {{ enemyDeck.length }} cartas</span> | <span>Cementerio: {{ enemyGraveyard.length }}</span>
+                <span *ngIf="isDeclaringAttack() && !enemyField[0] && !enemyField[1]" class="blink-text" style="color: var(--poke-red); font-weight: 900; margin-left: 10px;">🎯 ¡CLIC AQUÍ PARA ATAQUE DIRECTO!</span>
               </div>
             </div>
           </header>
 
-          <!-- COMBAT FIELD (Exactly 2 Slots per side: ATK and DEF) -->
+          <!-- COMBAT FIELD (ATK slot 0, DEF slot 1) -->
           <div class="combat-field">
             
-            <!-- OPPONENT FIELD (ATK slot 0, DEF slot 1) -->
+            <!-- OPPONENT FIELD -->
             <div class="field-row opponent-row">
               
               <!-- Enemy DEF Slot (index 1) -->
@@ -96,7 +96,7 @@ export interface FieldSlot {
                    [class.selected-target]="selectedTargetCard === 1"
                    [class.can-be-targeted]="isDeclaringAttack() && enemyField[1] !== null"
                    (click)="onEnemyFieldClick(1)">
-                <span class="socket-label">Defensor (DEF)</span>
+                <span class="socket-label">Defensor Rival (DEF)</span>
                 
                 <div *ngIf="enemyField[1]" class="card-wrapper-ygo float-animation def-rotated">
                   <div class="card-ygo">
@@ -105,12 +105,12 @@ export interface FieldSlot {
                         <div class="card-name-ygo">{{ enemyField[1].card.name }}</div>
                         <div class="card-stars-ygo">Nv.{{ enemyField[1].card.level || 1 }}</div>
                       </div>
-                      <div class="card-image-ygo" style="height: 50px;">
+                      <div class="card-image-ygo">
                         <img [src]="enemyField[1].card.image" alt="pokemon">
                       </div>
-                      <div class="card-stats-ygo" style="font-size: 0.5rem; padding-top: 1px;">
+                      <div class="card-stats-ygo" style="margin-top: 10px;">
                         <span>ATK: {{ enemyField[1].currentAtk }}</span>
-                        <span>DEF: {{ enemyField[1].currentDef }}</span>
+                        <span style="color: var(--poke-blue);">DEF: {{ enemyField[1].currentDef }}</span>
                       </div>
                       <div class="card-hp-bar-ygo">
                         <div class="hp-fill" [style.width]="(enemyField[1].currentHp / enemyField[1].card.hp * 100) + '%'"></div>
@@ -119,7 +119,7 @@ export interface FieldSlot {
                     </div>
                   </div>
                 </div>
-                <div *ngIf="!enemyField[1]" style="font-size: 0.75rem; color: #cbd5e1; font-weight: bold;">VACÍO</div>
+                <div *ngIf="!enemyField[1]" style="font-size: 0.75rem; color: #94a3b8; font-weight: bold; font-style: italic;">DEF vacío</div>
               </div>
 
               <!-- Enemy ATK Slot (index 0) -->
@@ -127,7 +127,7 @@ export interface FieldSlot {
                    [class.selected-target]="selectedTargetCard === 0"
                    [class.can-be-targeted]="isDeclaringAttack() && enemyField[0] !== null"
                    (click)="onEnemyFieldClick(0)">
-                <span class="socket-label">Atacante (ATK)</span>
+                <span class="socket-label">Atacante Rival (ATK)</span>
                 
                 <div *ngIf="enemyField[0]" class="card-wrapper-ygo float-animation">
                   <div class="card-ygo">
@@ -136,12 +136,12 @@ export interface FieldSlot {
                         <div class="card-name-ygo">{{ enemyField[0].card.name }}</div>
                         <div class="card-stars-ygo">Nv.{{ enemyField[0].card.level || 1 }}</div>
                       </div>
-                      <div class="card-image-ygo" style="height: 50px;">
+                      <div class="card-image-ygo">
                         <img [src]="enemyField[0].card.image" alt="pokemon">
                       </div>
-                      <div class="card-stats-ygo" style="font-size: 0.5rem; padding-top: 1px;">
+                      <div class="card-stats-ygo" style="margin-top: 10px;">
                         <span>ATK: {{ enemyField[0].currentAtk }}</span>
-                        <span>DEF: {{ enemyField[0].currentDef }}</span>
+                        <span style="color: var(--poke-blue);">DEF: {{ enemyField[0].currentDef }}</span>
                       </div>
                       <div class="card-hp-bar-ygo">
                         <div class="hp-fill" [style.width]="(enemyField[0].currentHp / enemyField[0].card.hp * 100) + '%'"></div>
@@ -150,23 +150,36 @@ export interface FieldSlot {
                     </div>
                   </div>
                 </div>
-                <div *ngIf="!enemyField[0]" style="font-size: 0.75rem; color: #cbd5e1; font-weight: bold;">VACÍO</div>
+                <div *ngIf="!enemyField[0]" style="font-size: 0.75rem; color: #94a3b8; font-weight: bold; font-style: italic;">ATK vacío</div>
               </div>
 
             </div>
 
-            <!-- CENTRAL INSTRUCTIONS BAR -->
-            <div class="central-divider">
-              <div class="vs-glow">Liga de Barajas Pokémon</div>
+            <!-- CENTRAL INTERACTIVE SECTION (VS and Clickable Draw Deck) -->
+            <div class="central-divider" style="padding: 0.75rem 1.5rem;">
+              <div class="vs-glow" style="font-size: 0.85rem;">Liga Pokémon</div>
               
-              <!-- Combat helper texts -->
-              <div class="combat-instruction" *ngIf="isMyTurn" style="color: var(--poke-dark); font-weight: bold;">
-                <span *ngIf="myHand.length > 0 && !myField[0] && !myField[1]">💡 Haz clic en una carta de tu mano y convócala como Atacante o Defensor.</span>
-                <span *ngIf="myField[0] && !myField[0].hasAttacked">⚔️ ¡Tienes un atacante listo! Haz clic en él para atacar al rival.</span>
-                <span *ngIf="myField[1] && !myField[0]">🛡️ Tu defensor está listo. El turno avanzará automáticamente al pasar.</span>
+              <!-- Clickable Deck in middle -->
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <!-- Glowing clickable deck for player draw phase -->
+                <div *ngIf="isMyTurn && currentPhase === 'wait_draw'" 
+                     (click)="drawCardFromMazo()" 
+                     class="pulse-anim btn-royal-gold" 
+                     style="cursor: pointer; padding: 0.5rem 1.25rem; font-size: 0.8rem; text-shadow: none; animation: blinker 1.2s infinite; border-color: var(--poke-dark);">
+                  🎴 ¡ROBAR CARTA! (Hacer clic)
+                </div>
+                <div *ngIf="!isMyTurn || currentPhase !== 'wait_draw'" 
+                     style="padding: 0.5rem 1.25rem; background: var(--poke-gray-bg); border: 3px dashed #cbd5e1; border-radius: 10px; font-size: 0.75rem; font-weight: 900; color: #94a3b8;">
+                  🎴 Mazo Central ({{ myDeck.length }})
+                </div>
               </div>
-              <div class="combat-instruction text-crimson" *ngIf="!isMyTurn" style="font-weight: bold; color: var(--poke-red);">
-                ⏳ Esperando movimiento del rival...
+
+              <!-- Help action instructions -->
+              <div class="combat-instruction" style="color: var(--poke-dark); font-weight: 800; font-size: 0.75rem;">
+                <span *ngIf="isMyTurn && currentPhase === 'wait_draw'" style="color: var(--poke-red);">⚠️ ¡Roba carta haciendo clic en el mazo central!</span>
+                <span *ngIf="isMyTurn && currentPhase === 'batalla' && !myField[0] && !myField[1]">💡 Coloca un Pokémon desde tu banca abajo.</span>
+                <span *ngIf="isMyTurn && currentPhase === 'batalla' && myField[0] && !myField[0].hasAttacked">⚔️ Usa los botones directamente en tu carta.</span>
+                <span *ngIf="!isMyTurn" style="color: var(--poke-red);">⏳ Turno del rival...</span>
               </div>
             </div>
 
@@ -178,7 +191,7 @@ export interface FieldSlot {
                    [class.selected-attacker]="selectedFieldCard === 0"
                    [class.empty-summonable]="selectedHandCard && myField[0] === null"
                    (click)="onPlayerFieldClick(0)">
-                <span class="socket-label">Atacante (ATK)</span>
+                <span class="socket-label">Mi Atacante (ATK)</span>
                 
                 <div *ngIf="myField[0]" class="card-wrapper-ygo">
                   <div class="card-ygo">
@@ -187,31 +200,28 @@ export interface FieldSlot {
                         <div class="card-name-ygo">{{ myField[0].card.name }}</div>
                         <div class="card-stars-ygo">Nv.{{ myField[0].card.level || 1 }}</div>
                       </div>
-                      <div class="card-image-ygo" style="height: 50px;">
+                      <div class="card-image-ygo">
                         <img [src]="myField[0].card.image" alt="pokemon">
                       </div>
-                      <div class="card-stats-ygo" style="font-size: 0.5rem; padding-top: 1px;">
-                        <span>ATK: {{ myField[0].currentAtk }}</span>
-                        <span>DEF: {{ myField[0].currentDef }}</span>
+                      <div class="card-stats-ygo" style="margin-top: 10px;">
+                        <span style="color: var(--poke-red);">ATK: {{ myField[0].currentAtk }}</span>
+                        <span style="color: var(--poke-blue);">DEF: {{ myField[0].currentDef }}</span>
                       </div>
                       <div class="card-hp-bar-ygo">
                         <div class="hp-fill" [style.width]="(myField[0].currentHp / myField[0].card.hp * 100) + '%'"></div>
                       </div>
                       <div class="card-status-badge">ATK</div>
+
+                      <!-- ACTION BUTTONS INTEGRATED DIRECTLY ON CARD FACE -->
+                      <div *ngIf="isMyTurn && currentPhase === 'batalla'" style="display: flex; gap: 4px; justify-content: center; margin-top: 8px;" (click)="$event.stopPropagation()">
+                        <button *ngIf="!myField[0].hasAttacked" (click)="selectAttacker(0)" class="btn" style="padding: 0.2rem 0.35rem; font-size: 0.6rem; font-weight: bold; border-color: var(--poke-red); box-shadow: 1px 1px 0 #000; background: var(--poke-yellow);">⚔️ Atacar</button>
+                        <button *ngIf="!myField[0].abilityUsed" (click)="activateAbility(0)" class="btn" style="padding: 0.2rem 0.35rem; font-size: 0.6rem; font-weight: bold; border-color: var(--poke-blue); box-shadow: 1px 1px 0 #000;">✨ Habilidad</button>
+                      </div>
+
                     </div>
                   </div>
-                  
-                  <!-- Popover Menus -->
-                  <div class="card-actions-popover" *ngIf="isMyTurn && selectedFieldCard === 0">
-                    <button *ngIf="!myField[0].hasAttacked" (click)="selectAttacker(0); $event.stopPropagation();" class="popover-btn" style="border-color: var(--poke-red); color: var(--poke-red);">
-                      ⚔️ Atacar
-                    </button>
-                    <button *ngIf="!myField[0].abilityUsed" (click)="activateAbility(0); $event.stopPropagation();" class="popover-btn" style="border-color: var(--poke-blue); color: var(--poke-blue);">
-                      ✨ Habilidad
-                    </button>
-                  </div>
                 </div>
-                <div *ngIf="!myField[0]" style="font-size: 0.75rem; color: #94a3b8; font-style: italic;">Invocar Aquí</div>
+                <div *ngIf="!myField[0]" style="font-size: 0.75rem; color: #94a3b8; font-style: italic; font-weight: bold;">Invocar ATK</div>
               </div>
 
               <!-- Player DEF Slot (index 1) -->
@@ -219,7 +229,7 @@ export interface FieldSlot {
                    [class.selected-attacker]="selectedFieldCard === 1"
                    [class.empty-summonable]="selectedHandCard && myField[1] === null"
                    (click)="onPlayerFieldClick(1)">
-                <span class="socket-label">Defensor (DEF)</span>
+                <span class="socket-label">Mi Defensor (DEF)</span>
                 
                 <div *ngIf="myField[1]" class="card-wrapper-ygo def-rotated">
                   <div class="card-ygo">
@@ -228,35 +238,34 @@ export interface FieldSlot {
                         <div class="card-name-ygo">{{ myField[1].card.name }}</div>
                         <div class="card-stars-ygo">Nv.{{ myField[1].card.level || 1 }}</div>
                       </div>
-                      <div class="card-image-ygo" style="height: 50px;">
+                      <div class="card-image-ygo">
                         <img [src]="myField[1].card.image" alt="pokemon">
                       </div>
-                      <div class="card-stats-ygo" style="font-size: 0.5rem; padding-top: 1px;">
-                        <span>ATK: {{ myField[1].currentAtk }}</span>
-                        <span>DEF: {{ myField[1].currentDef }}</span>
+                      <div class="card-stats-ygo" style="margin-top: 10px;">
+                        <span style="color: var(--poke-red);">ATK: {{ myField[1].currentAtk }}</span>
+                        <span style="color: var(--poke-blue);">DEF: {{ myField[1].currentDef }}</span>
                       </div>
                       <div class="card-hp-bar-ygo">
                         <div class="hp-fill" [style.width]="(myField[1].currentHp / myField[1].card.hp * 100) + '%'"></div>
                       </div>
                       <div class="card-status-badge">DEF</div>
+
+                      <!-- ACTION BUTTON INTEGRATED DIRECTLY ON DEF CARD FACE -->
+                      <div *ngIf="isMyTurn && currentPhase === 'batalla'" style="display: flex; gap: 4px; justify-content: center; margin-top: 8px;" (click)="$event.stopPropagation()">
+                        <button *ngIf="!myField[1].abilityUsed" (click)="activateAbility(1)" class="btn" style="padding: 0.2rem 0.35rem; font-size: 0.6rem; font-weight: bold; border-color: var(--poke-blue); box-shadow: 1px 1px 0 #000;">✨ Habilidad</button>
+                      </div>
+
                     </div>
                   </div>
-                  
-                  <!-- Popover Menus -->
-                  <div class="card-actions-popover" *ngIf="isMyTurn && selectedFieldCard === 1">
-                    <button *ngIf="!myField[1].abilityUsed" (click)="activateAbility(1); $event.stopPropagation();" class="popover-btn" style="border-color: var(--poke-blue); color: var(--poke-blue);">
-                      ✨ Habilidad
-                    </button>
-                  </div>
                 </div>
-                <div *ngIf="!myField[1]" style="font-size: 0.75rem; color: #94a3b8; font-style: italic;">Invocar Aquí</div>
+                <div *ngIf="!myField[1]" style="font-size: 0.75rem; color: #94a3b8; font-style: italic; font-weight: bold;">Invocar DEF</div>
               </div>
 
             </div>
 
           </div>
 
-          <!-- PLAYER HUD, LIFEBAR & HAND -->
+          <!-- PLAYER HUD, LIFEBAR -->
           <footer class="player-hud" style="background: #ffffff;">
             <div class="hud-avatar" style="background: #e0f2fe; border-color: var(--poke-blue);">🧢</div>
             <div class="hud-details">
@@ -266,53 +275,56 @@ export interface FieldSlot {
                 <div class="hud-lp-value">{{ myLp }} / 4000 LP</div>
               </div>
               <div class="hud-sub" style="font-weight: bold;">
-                <span>Mazo: {{ myDeck.length }} cartas restantes</span> | <span>Cementerio: {{ myGraveyard.length }}</span>
+                <span>Mazo: {{ myDeck.length }} cartas</span> | <span>Cementerio: {{ myGraveyard.length }}</span>
               </div>
             </div>
           </footer>
 
-          <!-- PLAYER HAND CARDS -->
-          <section class="hand-row">
-            <div *ngFor="let card of myHand; let idx = index" 
-                 class="card-wrapper-ygo hand-card-item animate-draw"
-                 [class.selected-hand]="selectedHandCard === card"
-                 (click)="selectHandCard(card)">
-              <div class="card-ygo">
-                <div class="card-face card-face-front" [ngClass]="'type-' + (card.types[0]?.toLowerCase() || 'normal')">
-                  
-                  <div class="card-header-ygo">
-                    <div class="card-name-ygo">{{ card.name }}</div>
-                    <div class="card-stars-ygo">Nv.{{ card.level || 1 }}</div>
-                  </div>
+          <!-- PLAYER BANCA (HAND CARDS) -->
+          <section style="background: #ffffff; border: 3px solid var(--poke-dark); box-shadow: 4px 4px 0px var(--poke-dark); border-radius: 18px; padding: 0.5rem 1rem; margin-top: 0.5rem;">
+            <div style="font-family: var(--font-title); font-weight: 900; font-size: 0.75rem; color: #64748b; text-transform: uppercase; margin-bottom: 0.25rem;">Tu Banca de Reserva</div>
+            <div class="hand-row">
+              <div *ngFor="let card of myHand; let idx = index" 
+                   class="card-wrapper-ygo hand-card-item animate-draw"
+                   [class.selected-hand]="selectedHandCard === card"
+                   (click)="selectHandCard(card)">
+                <div class="card-ygo">
+                  <div class="card-face card-face-front" [ngClass]="'type-' + (card.types[0]?.toLowerCase() || 'normal')">
+                    
+                    <div class="card-header-ygo">
+                      <div class="card-name-ygo">{{ card.name }}</div>
+                      <div class="card-stars-ygo">Nv.{{ card.level || 1 }}</div>
+                    </div>
 
-                  <div class="card-image-ygo">
-                    <img [src]="card.image" alt="Pokémon">
-                  </div>
+                    <div class="card-image-ygo">
+                      <img [src]="card.image" alt="Pokémon">
+                    </div>
 
-                  <div class="card-stats-ygo" style="margin-top: 15px;">
-                    <span style="color: var(--poke-red);">ATK: {{ card.attack }}</span>
-                    <span style="color: var(--poke-blue);">DEF: {{ card.defense }}</span>
-                  </div>
+                    <div class="card-stats-ygo" style="margin-top: 15px;">
+                      <span style="color: var(--poke-red);">ATK: {{ card.attack }}</span>
+                      <span style="color: var(--poke-blue);">DEF: {{ card.defense }}</span>
+                    </div>
 
-                  <!-- Quick Summon Buttons inside Selected Hand Card -->
-                  <div *ngIf="selectedHandCard === card && isMyTurn" style="display: flex; gap: 4px; justify-content: center; margin-top: 12px;" (click)="$event.stopPropagation()">
-                    <button (click)="quickSummon(card, 0)" [disabled]="myField[0] !== null" class="btn" style="padding: 0.25rem 0.4rem; font-size: 0.6rem; font-weight: bold; border-color: var(--poke-red);">⚔️ ATK</button>
-                    <button (click)="quickSummon(card, 1)" [disabled]="myField[1] !== null" class="btn" style="padding: 0.25rem 0.4rem; font-size: 0.6rem; font-weight: bold; border-color: var(--poke-blue);">🛡️ DEF</button>
-                  </div>
+                    <!-- Quick Summon Buttons inside Selected Banca Card -->
+                    <div *ngIf="selectedHandCard === card && isMyTurn && currentPhase === 'batalla'" style="display: flex; gap: 4px; justify-content: center; margin-top: 10px;" (click)="$event.stopPropagation()">
+                      <button (click)="quickSummon(card, 0)" [disabled]="myField[0] !== null" class="btn" style="padding: 0.2rem 0.35rem; font-size: 0.55rem; font-weight: bold; border-color: var(--poke-red); box-shadow: 1px 1px 0 #000; background: var(--poke-yellow);">⚔️ ATK</button>
+                      <button (click)="quickSummon(card, 1)" [disabled]="myField[1] !== null" class="btn" style="padding: 0.2rem 0.35rem; font-size: 0.55rem; font-weight: bold; border-color: var(--poke-blue); box-shadow: 1px 1px 0 #000;">🛡️ DEF</button>
+                    </div>
 
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div *ngIf="myHand.length === 0" class="empty-hand-label" style="font-weight: bold; color: #64748b;">
-              Mano Vacía (Robarás al inicio del siguiente turno)
+              
+              <div *ngIf="myHand.length === 0" class="empty-hand-label" style="font-weight: bold; color: #64748b;">
+                Banca Vacía (Robarás al inicio del turno)
+              </div>
             </div>
           </section>
 
         </main>
 
         <!-- RIGHT SIDEBAR (Logs & Actions) -->
-        <aside class="game-sidebar altar-panel">
+        <aside class="game-sidebar altar-panel" style="border-radius: 20px;">
           <div style="display: flex; flex-direction: column; gap: 0.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.75rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
               <h2 class="royal-title" style="font-size: 1.1rem; margin: 0; color: var(--poke-blue);">Estadio</h2>
@@ -325,14 +337,14 @@ export interface FieldSlot {
             </span>
           </div>
 
-          <!-- Active turn alert -->
+          <!-- Turn indicator -->
           <div class="action-controls">
             <div class="turn-announcement" [ngClass]="isMyTurn ? 'my-turn-glow' : 'enemy-turn-glow'">
               {{ isMyTurn ? '🚨 ¡TU TURNO! 🚨' : 'TURNO DEL RIVAL' }}
             </div>
 
-            <!-- Standby Pass Button (if they cannot attack or place card, they can pass) -->
-            <button *ngIf="isMyTurn" (click)="forcePassTurn()" class="btn-royal-crimson" style="width: 100%; margin-bottom: 0.5rem; font-size: 0.85rem; background: var(--poke-blue); border-color: var(--poke-dark);">
+            <!-- Standby Pass Button (skip turn) -->
+            <button *ngIf="isMyTurn && currentPhase === 'batalla'" (click)="forcePassTurn()" class="btn-royal-crimson" style="width: 100%; margin-bottom: 0.5rem; font-size: 0.85rem; background: var(--poke-blue); border-color: var(--poke-dark);">
               Pasar Turno ⏩
             </button>
 
@@ -341,7 +353,7 @@ export interface FieldSlot {
             </button>
           </div>
 
-          <!-- Logs -->
+          <!-- Logs panel -->
           <div class="battle-logs-panel">
             <h3 class="logs-title" style="font-family: var(--font-title); font-weight: 900; color: var(--poke-dark);">Historial de Turno</h3>
             <div class="logs-scroll">
@@ -358,6 +370,9 @@ export interface FieldSlot {
   styles: []
 })
 export class GameBoardComponent implements OnInit, OnDestroy {
+  get isMyTurn(): boolean {
+    return this.currentTurn === 'player';
+  }
   onlineMode = false;
   matchId = '';
   myRole: 'host' | 'guest' = 'host';
@@ -388,7 +403,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   enemyGraveyard: PokemonCard[] = [];
   
   currentTurn: 'player' | 'enemy' = 'player';
-  currentPhase: 'robo' | 'batalla' = 'robo';
+  currentPhase: 'wait_draw' | 'batalla' | 'robo' = 'wait_draw';
   actionLog: string[] = [];
 
   // Interaction selectors
@@ -498,7 +513,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     }
 
     this.actionLog.push('🏆 ¡El Duelo de Barajas Pokémon ha comenzado!');
-    this.actionLog.push(`Mano inicial robada (4 cartas cada uno).`);
+    this.actionLog.push(`Mano inicial colocada en la banca (4 cartas cada uno).`);
     this.actionLog.push(`Primer turno asignado a: ${this.currentTurn === 'player' ? 'TÚ' : 'RIVAL'}`);
 
     this.loading = false;
@@ -510,7 +525,6 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   private async initOnlineDuel() {
     this.loaderStatus = 'Conectando con la sala de combate del estadio...';
     
-    // Setup channel subscription with local table checking for reliability
     this.syncChannel = this.supabase.client.channel(`partida:${this.matchId}`)
       .on('postgres_changes', {
         event: 'UPDATE',
@@ -523,7 +537,6 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       })
       .subscribe();
 
-    // Query match info
     const { data: match, error } = await this.supabase.client
       .from('partidas')
       .select('*')
@@ -614,14 +627,14 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       jugador2_lp: 4000,
       jugador1_hand: hHand,
       jugador2_hand: gHand,
-      jugador1_field: [null, null], // length 2
-      jugador2_field: [null, null], // length 2
+      jugador1_field: [null, null],
+      jugador2_field: [null, null],
       jugador1_deck: hDeck,
       jugador2_deck: gDeck,
       jugador1_graveyard: [],
       jugador2_graveyard: [],
       turno: Math.random() > 0.5 ? 'jugador1' : 'jugador2',
-      fase: 'robo',
+      fase: 'wait_draw',
       historial_acciones: ['¡Comienza el duelo de Barajas Pokémon!', 'Se reparten 4 cartas iniciales a cada entrenador.'],
       ganador: null,
       j1_username: this.myUsername,
@@ -661,7 +674,6 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     this.myHand = this.myRole === 'host' ? state.jugador1_hand : state.jugador2_hand;
     this.enemyHand = this.myRole === 'host' ? state.jugador2_hand : state.jugador1_hand;
 
-    // Safety: slice if length > 2
     this.myField = (this.myRole === 'host' ? state.jugador1_field : state.jugador2_field).slice(0, 2);
     this.enemyField = (this.myRole === 'host' ? state.jugador2_field : state.jugador1_field).slice(0, 2);
 
@@ -737,53 +749,48 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
   // --- GAMEPLAY TURNS ---
 
-  get isMyTurn(): boolean {
-    return this.currentTurn === 'player';
-  }
-
   private startTurn() {
     this.selectedHandCard = null;
     this.selectedFieldCard = null;
     this.selectedTargetCard = null;
 
     if (this.currentTurn === 'player') {
-      this.currentPhase = 'robo';
-      this.audioService.playSynthSound('draw');
-      
-      // Auto Draw Phase
-      setTimeout(async () => {
-        if (this.myDeck.length > 0) {
-          const drawn = this.myDeck.shift()!;
-          this.myHand.push(drawn);
-          this.log(`Robas una carta del mazo: ${drawn.name}`);
-        } else if (this.myGraveyard.length > 0) {
-          // If deck empty but graveyard has cards, recycle them
-          this.myDeck = [...this.myGraveyard];
-          this.myGraveyard = [];
-          this.shuffle(this.myDeck);
-          const drawn = this.myDeck.shift()!;
-          this.myHand.push(drawn);
-          this.log(`Mazo reciclado. Robas carta: ${drawn.name}`);
-        } else {
-          this.log('Mazo y cementerio vacíos. No puedes robar.');
-        }
-        
-        this.currentPhase = 'batalla';
-        this.audioService.playClick();
-        
-        if (this.onlineMode) {
-          await this.pushOnlineState(`Robo automático de ${this.myUsername}.`);
-        }
-        this.cdr.detectChanges();
-      }, 1000);
-
+      this.currentPhase = 'wait_draw';
+      this.log('🎴 Tu turno. Haz clic en el mazo de reserva central para robar tu carta.');
+      this.cdr.detectChanges();
     } else {
       this.currentPhase = 'robo';
       if (!this.onlineMode) {
         this.runAiTurn();
       } else {
-        this.log(`Turno del contrincante...`);
+        this.log(`Turno del oponente...`);
       }
+    }
+    this.cdr.detectChanges();
+  }
+
+  async drawCardFromMazo() {
+    if (!this.isMyTurn || this.currentPhase !== 'wait_draw') return;
+    this.audioService.playSynthSound('draw');
+    
+    if (this.myDeck.length > 0) {
+      const drawn = this.myDeck.shift()!;
+      this.myHand.push(drawn);
+      this.log(`Robas de tu mazo: ${drawn.name}.`);
+    } else if (this.myGraveyard.length > 0) {
+      this.myDeck = [...this.myGraveyard];
+      this.myGraveyard = [];
+      this.shuffle(this.myDeck);
+      const drawn = this.myDeck.shift()!;
+      this.myHand.push(drawn);
+      this.log(`Mazo reciclado. Robas de tu mazo: ${drawn.name}.`);
+    } else {
+      this.log('¡No quedan cartas en tu mazo de reserva ni cementerio!');
+    }
+    
+    this.currentPhase = 'batalla';
+    if (this.onlineMode) {
+      await this.pushOnlineState(`Robo manual de ${this.myUsername}.`);
     }
     this.cdr.detectChanges();
   }
@@ -791,7 +798,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   async forcePassTurn() {
     if (!this.isMyTurn) return;
     this.audioService.playClick();
-    this.log('Pansas el turno voluntariamente.');
+    this.log('Pansas el turno.');
     await this.autoEndTurn();
   }
 
@@ -816,7 +823,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   // --- ACTIONS ---
 
   selectHandCard(card: PokemonCard) {
-    if (!this.isMyTurn) return;
+    if (!this.isMyTurn || this.currentPhase !== 'batalla') return;
     this.audioService.playClick();
     this.selectedFieldCard = null;
     this.selectedHandCard = this.selectedHandCard === card ? null : card;
@@ -824,15 +831,13 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   }
 
   onPlayerFieldClick(index: number) {
-    if (!this.isMyTurn) return;
+    if (!this.isMyTurn || this.currentPhase !== 'batalla') return;
 
-    // Click on active slot to select for action menu
     const slot = this.myField[index];
     if (slot !== null) {
       this.audioService.playClick();
       this.selectedFieldCard = this.selectedFieldCard === index ? null : index;
     } else if (this.selectedHandCard) {
-      // Summon to index click
       this.summonCard(this.selectedHandCard, index);
     } else {
       this.selectedFieldCard = null;
@@ -841,7 +846,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   }
 
   quickSummon(card: PokemonCard, index: number) {
-    if (!this.isMyTurn) return;
+    if (!this.isMyTurn || this.currentPhase !== 'batalla') return;
     this.summonCard(card, index);
   }
 
@@ -851,7 +856,6 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
     this.audioService.playSynthSound('summon');
     
-    // Create slot state
     this.myField[slotIndex] = {
       card,
       position: slotIndex === 0 ? 'ATK' : 'DEF',
@@ -862,9 +866,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       currentDef: card.defense
     };
 
-    // Remove from hand
     this.myHand.splice(handIdx, 1);
-    
     this.log(`Convocas a ${card.name} como ${slotIndex === 0 ? 'ATACANTE (ATK)' : 'DEFENSOR (DEF)'}.`);
     
     this.selectedHandCard = null;
@@ -900,10 +902,10 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
     if (firstType === 'fire') {
       slot.currentAtk += 300;
-      actionMsg += '+300 de poder de ataque.';
+      actionMsg += '+300 ATK.';
     } else if (firstType === 'water') {
       slot.currentDef += 300;
-      actionMsg += '+300 puntos de defensa.';
+      actionMsg += '+300 DEF.';
     } else if (firstType === 'grass') {
       slot.currentHp = Math.min(slot.card.hp, slot.currentHp + 400);
       actionMsg += '+400 HP sanados.';
@@ -921,7 +923,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       actionMsg += '+200 ATK y +200 DEF.';
     } else {
       this.myLp = Math.min(4000, this.myLp + 500);
-      actionMsg += 'Sanas +500 LP de salud general.';
+      actionMsg += 'Sanas +500 LP.';
     }
 
     this.log(actionMsg);
@@ -942,7 +944,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   }
 
   isDeclaringAttack(): boolean {
-    if (!this.isMyTurn || this.selectedFieldCard === null) return false;
+    if (!this.isMyTurn || this.selectedFieldCard === null || this.currentPhase !== 'batalla') return false;
     const slot = this.myField[this.selectedFieldCard];
     return slot !== null && slot.position === 'ATK' && !slot.hasAttacked;
   }
@@ -955,10 +957,9 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   tryDirectAttack() {
     if (!this.isDeclaringAttack()) return;
 
-    // Direct attack allowed ONLY if opponent has NO active cards on field
     const hasMonsters = this.enemyField.some(z => z !== null);
     if (hasMonsters) {
-      alert("Debes debilitar a los Pokémon rivales en el campo antes de atacar sus LP directamente.");
+      alert("Debes debilitar a los Pokémon rivales en el campo antes de atacar directamente.");
       return;
     }
 
@@ -966,6 +967,41 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   }
 
   // --- COMBAT MATHEMATICS ---
+
+  private calculateCombatAssistance(owner: 'player' | 'enemy', targetIdx: number): { power: number, logMsg: string } {
+    const field = owner === 'player' ? this.myField : this.enemyField;
+    const targetSlot = field[targetIdx];
+    if (!targetSlot) return { power: 0, logMsg: '' };
+
+    const targetVal = targetSlot.position === 'ATK' ? targetSlot.currentAtk : targetSlot.currentDef;
+    let helpPower = 0;
+    let logMsg = '';
+
+    if (targetIdx === 0) {
+      // Slot ATK es atacado: slot DEF (index 1) asiste con su DEF
+      const defCard = field[1];
+      if (defCard) {
+        helpPower = defCard.currentDef;
+        logMsg = owner === 'player'
+          ? `🛡️ [Cobertura Defensiva] Tu defensor ${defCard.card.name} te asiste sumando +${helpPower} DEF a tu ${targetSlot.card.name}.`
+          : `🛡️ [Cobertura Defensiva] El defensor rival ${defCard.card.name} asiste sumando +${helpPower} DEF a ${targetSlot.card.name}.`;
+      }
+    } else if (targetIdx === 1) {
+      // Slot DEF es atacado: slot ATK (index 0) asiste con su ATK
+      const atkCard = field[0];
+      if (atkCard) {
+        helpPower = atkCard.currentAtk;
+        logMsg = owner === 'player'
+          ? `⚔️ [Apoyo Atacante] Tu atacante ${atkCard.card.name} apoya sumando +${helpPower} ATK a tu ${targetSlot.card.name}.`
+          : `⚔️ [Apoyo Atacante] El atacante rival ${atkCard.card.name} apoya sumando +${helpPower} ATK a ${targetSlot.card.name}.`;
+      }
+    }
+
+    return {
+      power: targetVal + helpPower,
+      logMsg
+    };
+  }
 
   private executeAttack(attackerIdx: number, targetIdx: number) {
     const attacker = this.myField[attackerIdx];
@@ -982,44 +1018,31 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.audioService.playSynthSound('hit');
 
-      // Target is in ATK position vs DEF position
-      if (target.position === 'ATK') {
-        const diff = attacker.currentAtk - target.currentAtk;
+      // Cálculo de asistencia de combate usando el método unificado
+      const assistance = this.calculateCombatAssistance('enemy', targetIdx);
+      if (assistance.logMsg) {
+        this.log(assistance.logMsg);
+      }
 
-        if (diff > 0) {
-          this.log(`¡Ganaste la batalla! ${target.card.name} es debilitado. Daño al oponente: ${diff} LP`);
-          this.enemyLp = Math.max(0, this.enemyLp - diff);
-          this.destroyEnemyMonster(targetIdx);
-        } else if (diff < 0) {
-          const absDiff = Math.abs(diff);
-          this.log(`¡Derrota! Tu Pokémon es debilitado. Recibes ${absDiff} de daño a tus LP`);
-          this.myLp = Math.max(0, this.myLp - absDiff);
-          this.destroyPlayerMonster(attackerIdx);
-        } else {
-          this.log(`¡Combate recíproco! Ambos Pokémon se debilitan mutuamente.`);
-          this.destroyEnemyMonster(targetIdx);
-          this.destroyPlayerMonster(attackerIdx);
-        }
+      const diff = attacker.currentAtk - assistance.power;
 
+      if (diff > 0) {
+        this.log(`¡Victoria! ${target.card.name} es debilitado. Restamos la diferencia de ${diff} LP al oponente.`);
+        this.enemyLp = Math.max(0, this.enemyLp - diff);
+        this.destroyEnemyMonster(targetIdx);
+      } else if (diff < 0) {
+        const absDiff = Math.abs(diff);
+        this.log(`¡Rebote! El ataque es repelido. Tu Pokémon ${attacker.card.name} es debilitado. Sufres ${absDiff} daño LP.`);
+        this.myLp = Math.max(0, this.myLp - absDiff);
+        this.destroyPlayerMonster(attackerIdx);
       } else {
-        // Target is in DEF position
-        const diff = attacker.currentAtk - target.currentDef;
-
-        if (diff > 0) {
-          this.log(`¡Defensa rota! El defensor rival ${target.card.name} es debilitado.`);
-          this.destroyEnemyMonster(targetIdx);
-        } else if (diff < 0) {
-          const absDiff = Math.abs(diff);
-          this.log(`¡Defensa inquebrantable! Tu golpe rebota y sufres ${absDiff} daño de contragolpe LP.`);
-          this.myLp = Math.max(0, this.myLp - absDiff);
-        } else {
-          this.log(`Empate táctico. Ningún escudo cede.`);
-        }
+        this.log(`¡Choque de fuerzas! Ambos Pokémon son debilitados en el impacto.`);
+        this.destroyEnemyMonster(targetIdx);
+        this.destroyPlayerMonster(attackerIdx);
       }
 
       this.checkVictoryOfflineOnline().then(() => {
         if (!this.duelEnded) {
-          // AUTO-END TURN AFTER ATTACK
           this.autoEndTurn();
         }
       });
@@ -1046,7 +1069,6 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
       this.checkVictoryOfflineOnline().then(() => {
         if (!this.duelEnded) {
-          // AUTO-END TURN AFTER ATTACK
           this.autoEndTurn();
         }
       });
@@ -1085,16 +1107,15 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Defeat if no cards left in hand, field, and deck
     const myRemaining = this.myHand.length + this.myField.filter(z => z !== null).length + this.myDeck.length;
     const enemyRemaining = this.enemyHand.length + this.enemyField.filter(z => z !== null).length + this.enemyDeck.length;
 
     if (myRemaining === 0) {
-      await this.finishDuel(false, 'Te has quedado sin cartas disponibles en la partida.');
+      await this.finishDuel(false, 'Te has quedado sin cartas en el combate.');
       return;
     }
     if (enemyRemaining === 0) {
-      await this.finishDuel(true, 'Tu rival se ha quedado sin cartas disponibles.');
+      await this.finishDuel(true, 'El oponente se ha quedado sin cartas.');
       return;
     }
   }
@@ -1117,7 +1138,6 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       });
     }
 
-    // Process win rewards
     if (playerWins && !this.rewardProcessed) {
       this.rewardProcessed = true;
       try {
@@ -1167,7 +1187,6 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     await this.delay(1200);
 
     // AI Decision: Summon card if slot empty
-    // If slot 0 (ATK) empty, summon best ATK card. If slot 1 (DEF) empty, summon best DEF card.
     let summoned = false;
     
     if (this.enemyField[0] === null && this.enemyHand.length > 0) {
@@ -1238,9 +1257,9 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       // Determine target (prefer defender, then attacker, then direct)
       let targetIdx = -1;
       if (this.myField[1] !== null) {
-        targetIdx = 1; // attack defender
+        targetIdx = 1;
       } else if (this.myField[0] !== null) {
-        targetIdx = 0; // attack attacker
+        targetIdx = 0;
       }
 
       this.audioService.playSynthSound('attack');
@@ -1251,33 +1270,27 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         await this.delay(800);
         this.audioService.playSynthSound('hit');
 
-        if (pTarget.position === 'ATK') {
-          const diff = attacker.currentAtk - pTarget.currentAtk;
-          if (diff > 0) {
-            this.log(`¡Tu ${pTarget.card.name} es debilitado! Sufres ${diff} daño a LP.`);
-            this.myLp = Math.max(0, this.myLp - diff);
-            this.destroyPlayerMonster(targetIdx);
-          } else if (diff < 0) {
-            const absDiff = Math.abs(diff);
-            this.log(`¡Contraataque! Pokémon rival es debilitado. Rival sufre ${absDiff} daño LP.`);
-            this.enemyLp = Math.max(0, this.enemyLp - absDiff);
-            this.destroyEnemyMonster(0);
-          } else {
-            this.log(`Ambas cartas se destruyen en combate.`);
-            this.destroyPlayerMonster(targetIdx);
-            this.destroyEnemyMonster(0);
-          }
+        // Cálculo de asistencia de combate usando el método unificado
+        const assistance = this.calculateCombatAssistance('player', targetIdx);
+        if (assistance.logMsg) {
+          this.log(assistance.logMsg);
+        }
+
+        const diff = attacker.currentAtk - assistance.power;
+
+        if (diff > 0) {
+          this.log(`¡Tu ${pTarget.card.name} es debilitado! Sufres la diferencia de ${diff} daño a tus LP.`);
+          this.myLp = Math.max(0, this.myLp - diff);
+          this.destroyPlayerMonster(targetIdx);
+        } else if (diff < 0) {
+          const absDiff = Math.abs(diff);
+          this.log(`¡Contraataque! El atacante del rival es debilitado por tu defensa. Rival sufre ${absDiff} daño LP.`);
+          this.enemyLp = Math.max(0, this.enemyLp - absDiff);
+          this.destroyEnemyMonster(0);
         } else {
-          // target is DEF
-          const diff = attacker.currentAtk - pTarget.currentDef;
-          if (diff > 0) {
-            this.log(`¡Tu defensor ${pTarget.card.name} es debilitado!`);
-            this.destroyPlayerMonster(targetIdx);
-          } else if (diff < 0) {
-            const absDiff = Math.abs(diff);
-            this.log(`¡Defensa exitosa! El rival sufre ${absDiff} daño de contragolpe a sus LP.`);
-            this.enemyLp = Math.max(0, this.enemyLp - absDiff);
-          }
+          this.log(`¡Doble destrucción mutua!`);
+          this.destroyPlayerMonster(targetIdx);
+          this.destroyEnemyMonster(0);
         }
       } else {
         // Direct Attack
@@ -1293,7 +1306,6 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
     this.checkVictoryOfflineOnline();
     
-    // AI passes turn back to player automatically
     if (!this.duelEnded) {
       this.log(`Rival finaliza su turno.`);
       await this.delay(800);

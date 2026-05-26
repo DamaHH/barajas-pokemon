@@ -226,22 +226,27 @@ import { AudioService } from '../../core/services/audio/audio.service';
           <div style="display: flex; flex-direction: column; gap: 1.5rem; font-size: 0.9rem; color: var(--poke-dark); line-height: 1.5;">
             <div>
               <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">1. Puntos de Vida (4000 LP)</h3>
-              <p>El objetivo es debilitar los LP del rival a 0. Ambos jugadores inician con 4000 LP de salud general.</p>
+              <p>Cada entrenador inicia con 4000 LP. Quien llegue a 0 LP o se quede sin cartas para robar perderá el combate.</p>
             </div>
 
             <div>
-              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">2. Estructura de Turno Automática</h3>
-              <p>Tu turno se divide en Robo y Acción. Cuando robas carta, puedes invocarla en tus casillas del campo o atacar. <strong>Una vez que atacas o convocas, el turno finaliza automáticamente</strong> para acelerar el ritmo del juego.</p>
+              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">2. Robo Manual en el Centro</h3>
+              <p>Al iniciar tu turno, la arena te indicará que debes **hacer clic en el mazo de robo** en medio del estadio para jalar tu carta de turno a tu banca.</p>
             </div>
 
             <div>
-              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">3. Ranura Atacante (ATK) vs Defensora (DEF)</h3>
-              <p>Tienes 2 casillas en el campo. Puedes colocar un Pokémon como Atacante (combate con el ataque) y otro como Defensor (combate con la defensa). Si te matan a tus Pokémon, puedes reponerlos invocando desde tu mano robada.</p>
+              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">3. Cobertura Defensiva</h3>
+              <p>Tienes dos zonas: Atacante (ATK) y Defensor (DEF). Si tienes un Pokémon defensor en juego y atacan a tu atacante, **el defensor lo protegerá sumando sus puntos de defensa** al cálculo, mitigando el ataque o castigando al rival.</p>
             </div>
 
             <div>
-              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">4. Ganar Cartas</h3>
-              <p>Usa tus celdas de Safari en la Hierba Alta para buscar Pokémon. Al ganar duelos se te premiará con PokéCoins y más celdas para seguir capturando.</p>
+              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">4. Daño por Carta Eliminada</h3>
+              <p>Cada vez que destruyes un Pokémon del oponente, **la diferencia de puntos de combate se descuenta directamente de los LP del rival**. Las habilidades especiales sólo se pueden usar una vez por duelo.</p>
+            </div>
+
+            <div>
+              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">5. PokéCoins y Recargas de Safari</h3>
+              <p>Ganarás 150 PokéCoins por cada victoria (tanto contra la IA del simulador como en duelos multijugador online). Para canjearlos por más intentos de captura, ve a la sección <strong>Hierba Alta (Safari)</strong>; en la parte inferior encontrarás el panel de canje donde podrás recargar 1 Safari Ball a cambio de 150 PokéCoins. ¡Así nunca te quedarás sin cartas!</p>
             </div>
           </div>
 
