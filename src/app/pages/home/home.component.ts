@@ -226,22 +226,22 @@ import { AudioService } from '../../core/services/audio/audio.service';
           <div style="display: flex; flex-direction: column; gap: 1.5rem; font-size: 0.9rem; color: var(--poke-dark); line-height: 1.5;">
             <div>
               <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">1. Puntos de Vida (4000 LP)</h3>
-              <p>Cada entrenador inicia con 4000 LP. Quien llegue a 0 LP o se quede sin cartas para robar perderá el combate.</p>
+              <p>Cada entrenador inicia con 4000 LP. Quien llegue a 0 LP o se quede sin recursos utilizables (cero cartas en mazo, mano y campo) perderá el combate.</p>
             </div>
 
             <div>
-              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">2. Robo Manual en el Centro</h3>
-              <p>Al iniciar tu turno, la arena te indicará que debes **hacer clic en el mazo de robo** en medio del estadio para jalar tu carta de turno a tu banca.</p>
+              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">2. Robo por Destrucción</h3>
+              <p>No hay robo al inicio del turno. En su lugar, cuando uno de tus Pokémon es eliminado del campo, robas automáticamente 1 carta de tu mazo de reserva a tu banca.</p>
             </div>
 
             <div>
-              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">3. Cobertura Defensiva</h3>
-              <p>Tienes dos zonas: Atacante (ATK) y Defensor (DEF). Si tienes un Pokémon defensor en juego y atacan a tu atacante, **el defensor lo protegerá sumando sus puntos de defensa** al cálculo, mitigando el ataque o castigando al rival.</p>
+              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">3. Fase de Colocación y Cobertura</h3>
+              <p>Al iniciar la partida, colocas 1 carta en la zona de Ataque (ATK) y 1 en la de Defensa (DEF), y pasas tu turno. Luego, el oponente coloca sus 2 cartas. En batalla, el defensor protege a su atacante: el rival no podrá declarar ataques contra tu slot de Ataque (ATK) hasta haber destruido al defensor (DEF). La carta en DEF solo defiende, mientras que la carta en ATK es la única que puede realizar ataques.</p>
             </div>
 
             <div>
-              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">4. Daño por Carta Eliminada</h3>
-              <p>Cada vez que destruyes un Pokémon del oponente, **la diferencia de puntos de combate se descuenta directamente de los LP del rival**. Las habilidades especiales sólo se pueden usar una vez por duelo.</p>
+              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">4. Combate y Daño a LP</h3>
+              <p>Los ataques restan HP al Pokémon objetivo. Al ser derrotado un Pokémon, su dueño pierde LP (Puntos de Vida) igual a los puntos de HP máximos de esa carta. Si atacas a un oponente más fuerte, tu Pokémon sufrirá daño de rebote en su HP.</p>
             </div>
 
             <div>

@@ -125,7 +125,7 @@ export interface FieldSlot {
               <!-- Enemy ATK Slot (index 0) -->
               <div class="field-socket" 
                    [class.selected-target]="selectedTargetCard === 0"
-                   [class.can-be-targeted]="isDeclaringAttack() && enemyField[0] !== null"
+                   [class.can-be-targeted]="isDeclaringAttack() && enemyField[0] !== null && enemyField[1] === null"
                    (click)="onEnemyFieldClick(0)">
                 <span class="socket-label">Atacante Rival (ATK)</span>
                 
@@ -159,27 +159,19 @@ export interface FieldSlot {
             <div class="central-divider" style="padding: 0.75rem 1.5rem;">
               <div class="vs-glow" style="font-size: 0.85rem;">Liga Pokémon</div>
               
-              <!-- Clickable Deck in middle -->
+              <!-- Mazo de Reserva in middle -->
               <div style="display: flex; align-items: center; gap: 1rem;">
-                <!-- Glowing clickable deck for player draw phase -->
-                <div *ngIf="isMyTurn && currentPhase === 'wait_draw'" 
-                     (click)="drawCardFromMazo()" 
-                     class="pulse-anim btn-royal-gold" 
-                     style="cursor: pointer; padding: 0.5rem 1.25rem; font-size: 0.8rem; text-shadow: none; animation: blinker 1.2s infinite; border-color: var(--poke-dark);">
-                  🎴 ¡ROBAR CARTA! (Hacer clic)
-                </div>
-                <div *ngIf="!isMyTurn || currentPhase !== 'wait_draw'" 
-                     style="padding: 0.5rem 1.25rem; background: var(--poke-gray-bg); border: 3px dashed #cbd5e1; border-radius: 10px; font-size: 0.75rem; font-weight: 900; color: #94a3b8;">
-                  🎴 Mazo Central ({{ myDeck.length }})
+                <div style="padding: 0.5rem 1.25rem; background: var(--poke-gray-bg); border: 3px dashed #cbd5e1; border-radius: 10px; font-size: 0.75rem; font-weight: 900; color: #94a3b8;">
+                  🎴 Mazo de Reserva ({{ myDeck.length }})
                 </div>
               </div>
 
               <!-- Help action instructions -->
               <div class="combat-instruction" style="color: var(--poke-dark); font-weight: 800; font-size: 0.75rem;">
-                <span *ngIf="isMyTurn && currentPhase === 'wait_draw'" style="color: var(--poke-red);">⚠️ ¡Roba carta haciendo clic en el mazo central!</span>
+                <span *ngIf="isMyTurn && (currentPhase === 'colocacion_player' || currentPhase === 'colocacion_enemy')" style="color: var(--poke-red);">🛡️ Coloca tu ATK/DEF inicial y haz clic en Confirmar Colocación.</span>
                 <span *ngIf="isMyTurn && currentPhase === 'batalla' && !myField[0] && !myField[1]">💡 Coloca un Pokémon desde tu banca abajo.</span>
                 <span *ngIf="isMyTurn && currentPhase === 'batalla' && myField[0] && !myField[0].hasAttacked">⚔️ Usa los botones directamente en tu carta.</span>
-                <span *ngIf="!isMyTurn" style="color: var(--poke-red);">⏳ Turno del rival...</span>
+                <span *ngIf="!isMyTurn" style="color: var(--poke-red);">⏳ Turno del oponente...</span>
               </div>
             </div>
 
@@ -215,7 +207,6 @@ export interface FieldSlot {
                       <!-- ACTION BUTTONS INTEGRATED DIRECTLY ON CARD FACE -->
                       <div *ngIf="isMyTurn && currentPhase === 'batalla'" style="display: flex; gap: 4px; justify-content: center; margin-top: 8px;" (click)="$event.stopPropagation()">
                         <button *ngIf="!myField[0].hasAttacked" (click)="selectAttacker(0)" class="btn" style="padding: 0.2rem 0.35rem; font-size: 0.6rem; font-weight: bold; border-color: var(--poke-red); box-shadow: 1px 1px 0 #000; background: var(--poke-yellow);">⚔️ Atacar</button>
-                        <button *ngIf="!myField[0].abilityUsed" (click)="activateAbility(0)" class="btn" style="padding: 0.2rem 0.35rem; font-size: 0.6rem; font-weight: bold; border-color: var(--poke-blue); box-shadow: 1px 1px 0 #000;">✨ Habilidad</button>
                       </div>
 
                     </div>
@@ -251,9 +242,6 @@ export interface FieldSlot {
                       <div class="card-status-badge">DEF</div>
 
                       <!-- ACTION BUTTON INTEGRATED DIRECTLY ON DEF CARD FACE -->
-                      <div *ngIf="isMyTurn && currentPhase === 'batalla'" style="display: flex; gap: 4px; justify-content: center; margin-top: 8px;" (click)="$event.stopPropagation()">
-                        <button *ngIf="!myField[1].abilityUsed" (click)="activateAbility(1)" class="btn" style="padding: 0.2rem 0.35rem; font-size: 0.6rem; font-weight: bold; border-color: var(--poke-blue); box-shadow: 1px 1px 0 #000;">✨ Habilidad</button>
-                      </div>
 
                     </div>
                   </div>
@@ -316,7 +304,7 @@ export interface FieldSlot {
               </div>
               
               <div *ngIf="myHand.length === 0" class="empty-hand-label" style="font-weight: bold; color: #64748b;">
-                Banca Vacía (Robarás al inicio del turno)
+                Banca Vacía (Robarás cuando un Pokémon sea eliminado)
               </div>
             </div>
           </section>
@@ -342,6 +330,11 @@ export interface FieldSlot {
             <div class="turn-announcement" [ngClass]="isMyTurn ? 'my-turn-glow' : 'enemy-turn-glow'">
               {{ isMyTurn ? '🚨 ¡TU TURNO! 🚨' : 'TURNO DEL RIVAL' }}
             </div>
+
+            <!-- Confirm placement button -->
+            <button *ngIf="isMyTurn && (currentPhase === 'colocacion_player' || currentPhase === 'colocacion_enemy')" (click)="confirmarColocacion()" class="btn-royal-crimson" style="width: 100%; margin-bottom: 0.5rem; font-size: 0.85rem; background: var(--poke-red); border-color: var(--poke-dark);">
+              Confirmar Colocación 🚀
+            </button>
 
             <!-- Standby Pass Button (skip turn) -->
             <button *ngIf="isMyTurn && currentPhase === 'batalla'" (click)="forcePassTurn()" class="btn-royal-crimson" style="width: 100%; margin-bottom: 0.5rem; font-size: 0.85rem; background: var(--poke-blue); border-color: var(--poke-dark);">
@@ -401,9 +394,11 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   enemyDeck: PokemonCard[] = [];
   myGraveyard: PokemonCard[] = [];
   enemyGraveyard: PokemonCard[] = [];
+  myDrawCount = 0;
+  enemyDrawCount = 0;
   
   currentTurn: 'player' | 'enemy' = 'player';
-  currentPhase: 'wait_draw' | 'batalla' | 'robo' = 'wait_draw';
+  currentPhase: 'colocacion_player' | 'colocacion_enemy' | 'batalla' = 'colocacion_player';
   actionLog: string[] = [];
 
   // Interaction selectors
@@ -479,7 +474,8 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
   private async initOfflineDuel() {
     this.loaderStatus = 'Convocando oponente virtual y barajando mazos...';
-    this.currentTurn = Math.random() > 0.5 ? 'player' : 'enemy';
+    this.currentTurn = 'player';
+    this.currentPhase = 'colocacion_player';
     
     // Load player active deck
     try {
@@ -492,10 +488,17 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       if (!error && data && data.length > 0 && data[0].cartas) {
         this.myDeck = JSON.parse(JSON.stringify(data[0].cartas));
       } else {
-        this.myDeck = await this.pokeapi.getRandomPokemonCards(5);
+        this.myDeck = await this.pokeapi.getRandomPokemonCards(7);
       }
     } catch(e) {
-      this.myDeck = await this.pokeapi.getRandomPokemonCards(5);
+      this.myDeck = await this.pokeapi.getRandomPokemonCards(7);
+    }
+
+    // Fill up to 7 cards if needed
+    if (this.myDeck.length < 7) {
+      const missing = 7 - this.myDeck.length;
+      const extras = await this.pokeapi.getRandomPokemonCards(missing);
+      this.myDeck.push(...extras);
     }
 
     // AI deck
@@ -506,20 +509,21 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     this.shuffle(this.myDeck);
     this.shuffle(this.enemyDeck);
 
-    // Draw initial: 4 cards
+    // Initial fields empty
+    this.myField = [null, null];
+    this.enemyField = [null, null];
+
+    // Draw initial 4 cards to hand
     for (let i = 0; i < 4; i++) {
       if (this.myDeck.length > 0) this.myHand.push(this.myDeck.shift()!);
       if (this.enemyDeck.length > 0) this.enemyHand.push(this.enemyDeck.shift()!);
     }
 
     this.actionLog.push('🏆 ¡El Duelo de Barajas Pokémon ha comenzado!');
-    this.actionLog.push(`Mano inicial colocada en la banca (4 cartas cada uno).`);
-    this.actionLog.push(`Primer turno asignado a: ${this.currentTurn === 'player' ? 'TÚ' : 'RIVAL'}`);
+    this.actionLog.push('🛡️ Fase de Colocación: Selecciona una carta de tu banca y colócala en ATK y otra en DEF. Luego confirma.');
 
     this.loading = false;
     this.cdr.detectChanges();
-
-    this.startTurn();
   }
 
   private async initOnlineDuel() {
@@ -599,7 +603,12 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     if (hData && hData.cartas) {
       hDeck = JSON.parse(JSON.stringify(hData.cartas));
     } else {
-      hDeck = await this.pokeapi.getRandomPokemonCards(5);
+      hDeck = await this.pokeapi.getRandomPokemonCards(7);
+    }
+    if (hDeck.length < 7) {
+      const missing = 7 - hDeck.length;
+      const extras = await this.pokeapi.getRandomPokemonCards(missing);
+      hDeck.push(...extras);
     }
 
     let gDeck: PokemonCard[] = [];
@@ -607,14 +616,19 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     if (gData && gData.cartas) {
       gDeck = JSON.parse(JSON.stringify(gData.cartas));
     } else {
-      gDeck = await this.pokeapi.getRandomPokemonCards(5);
+      gDeck = await this.pokeapi.getRandomPokemonCards(7);
+    }
+    if (gDeck.length < 7) {
+      const missing = 7 - gDeck.length;
+      const extras = await this.pokeapi.getRandomPokemonCards(missing);
+      gDeck.push(...extras);
     }
 
     // Shuffle
     this.shuffle(hDeck);
     this.shuffle(gDeck);
 
-    // Initial hands
+    // Initial empty fields and draw 4 cards
     const hHand: PokemonCard[] = [];
     const gHand: PokemonCard[] = [];
     for (let i = 0; i < 4; i++) {
@@ -633,9 +647,11 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       jugador2_deck: gDeck,
       jugador1_graveyard: [],
       jugador2_graveyard: [],
-      turno: Math.random() > 0.5 ? 'jugador1' : 'jugador2',
-      fase: 'wait_draw',
-      historial_acciones: ['¡Comienza el duelo de Barajas Pokémon!', 'Se reparten 4 cartas iniciales a cada entrenador.'],
+      jugador1_draw_count: 0,
+      jugador2_draw_count: 0,
+      turno: 'jugador1',
+      fase: 'colocacion_player',
+      historial_acciones: ['¡Comienza el duelo de Barajas Pokémon!', 'Coloca tus cartas de Ataque (ATK) y Defensa (DEF) para iniciar el combate.'],
       ganador: null,
       j1_username: this.myUsername,
       j2_username: this.enemyUsername
@@ -683,6 +699,9 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     this.myGraveyard = this.myRole === 'host' ? state.jugador1_graveyard : state.jugador2_graveyard;
     this.enemyGraveyard = this.myRole === 'host' ? state.jugador2_graveyard : state.jugador1_graveyard;
 
+    this.myDrawCount = this.myRole === 'host' ? (state.jugador1_draw_count || 0) : (state.jugador2_draw_count || 0);
+    this.enemyDrawCount = this.myRole === 'host' ? (state.jugador2_draw_count || 0) : (state.jugador1_draw_count || 0);
+
     this.currentTurn = (state.turno === 'jugador1' && this.myRole === 'host') || 
                         (state.turno === 'jugador2' && this.myRole === 'guest') ? 'player' : 'enemy';
 
@@ -727,6 +746,8 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       jugador2_deck: isJ1 ? this.enemyDeck : this.myDeck,
       jugador1_graveyard: isJ1 ? this.myGraveyard : this.enemyGraveyard,
       jugador2_graveyard: isJ1 ? this.enemyGraveyard : this.myGraveyard,
+      jugador1_draw_count: isJ1 ? this.myDrawCount : this.enemyDrawCount,
+      jugador2_draw_count: isJ1 ? this.enemyDrawCount : this.myDrawCount,
       turno: (this.currentTurn === 'player' && isJ1) || (this.currentTurn === 'enemy' && !isJ1) ? 'jugador1' : 'jugador2',
       fase: this.currentPhase,
       historial_acciones: this.actionLog,
@@ -749,17 +770,52 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
   // --- GAMEPLAY TURNS ---
 
+
+
+  private async finalizarPorDeckOut(quienIntentoRobar: 'player' | 'enemy') {
+    this.log('🚨 El mazo de reserva se ha agotado. Evaluando estado de la arena por puntos y cartas...');
+    
+    let playerWins = false;
+    let reason = '';
+    
+    const myRemainingCards = this.myHand.length + this.myField.filter(z => z !== null).length;
+    const enemyRemainingCards = this.enemyHand.length + this.enemyField.filter(z => z !== null).length;
+
+    if (this.myLp > this.enemyLp) {
+      playerWins = true;
+      reason = `Victoria por puntos (LP). Posees ${this.myLp} LP contra ${this.enemyLp} LP del rival.`;
+    } else if (this.enemyLp > this.myLp) {
+      playerWins = false;
+      reason = `Derrota por puntos (LP). El rival posee ${this.enemyLp} LP contra ${this.myLp} LP tuyos.`;
+    } else {
+      if (myRemainingCards > enemyRemainingCards) {
+        playerWins = true;
+        reason = `Victoria por ventaja de cartas. Tienes ${myRemainingCards} cartas en juego contra ${enemyRemainingCards} del rival.`;
+      } else if (enemyRemainingCards > myRemainingCards) {
+        playerWins = false;
+        reason = `Derrota por ventaja de cartas. El rival tiene ${enemyRemainingCards} cartas en juego contra ${myRemainingCards} tuyas.`;
+      } else {
+        playerWins = quienIntentoRobar === 'enemy';
+        reason = playerWins 
+          ? 'Victoria por resistencia. El rival agotó su mazo primero.' 
+          : 'Derrota por fatiga. Agotaste tu mazo primero.';
+      }
+    }
+    
+    await this.finishDuel(playerWins, reason);
+  }
+
   private startTurn() {
     this.selectedHandCard = null;
     this.selectedFieldCard = null;
     this.selectedTargetCard = null;
 
     if (this.currentTurn === 'player') {
-      this.currentPhase = 'wait_draw';
-      this.log('🎴 Tu turno. Haz clic en el mazo de reserva central para robar tu carta.');
+      this.currentPhase = 'batalla';
+      this.log('⚔️ Tu turno. Puedes convocar cartas o declarar tu ataque.');
       this.cdr.detectChanges();
     } else {
-      this.currentPhase = 'robo';
+      this.currentPhase = 'batalla';
       if (!this.onlineMode) {
         this.runAiTurn();
       } else {
@@ -769,31 +825,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  async drawCardFromMazo() {
-    if (!this.isMyTurn || this.currentPhase !== 'wait_draw') return;
-    this.audioService.playSynthSound('draw');
-    
-    if (this.myDeck.length > 0) {
-      const drawn = this.myDeck.shift()!;
-      this.myHand.push(drawn);
-      this.log(`Robas de tu mazo: ${drawn.name}.`);
-    } else if (this.myGraveyard.length > 0) {
-      this.myDeck = [...this.myGraveyard];
-      this.myGraveyard = [];
-      this.shuffle(this.myDeck);
-      const drawn = this.myDeck.shift()!;
-      this.myHand.push(drawn);
-      this.log(`Mazo reciclado. Robas de tu mazo: ${drawn.name}.`);
-    } else {
-      this.log('¡No quedan cartas en tu mazo de reserva ni cementerio!');
-    }
-    
-    this.currentPhase = 'batalla';
-    if (this.onlineMode) {
-      await this.pushOnlineState(`Robo manual de ${this.myUsername}.`);
-    }
-    this.cdr.detectChanges();
-  }
+
 
   async forcePassTurn() {
     if (!this.isMyTurn) return;
@@ -810,7 +842,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
     this.myField.forEach(s => { if (s) s.hasAttacked = false; });
     this.currentTurn = 'enemy';
-    this.currentPhase = 'robo';
+    this.currentPhase = 'batalla';
 
     if (this.onlineMode) {
       await this.pushOnlineState(`Turno cedido a ${this.enemyUsername}.`);
@@ -820,10 +852,82 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
+  confirmarColocacion() {
+    if (!this.isMyTurn) return;
+    
+    if (this.myField[0] === null || this.myField[1] === null) {
+      alert("Debes colocar un Pokémon en la zona de Ataque (ATK) y otro en la zona de Defensa (DEF) antes de confirmar.");
+      return;
+    }
+    
+    this.audioService.playClick();
+    
+    if (this.onlineMode) {
+      if (this.myRole === 'host') {
+        this.currentTurn = 'enemy';
+        this.pushOnlineState(`${this.myUsername} ha colocado sus cartas. Esperando al rival...`);
+      } else {
+        this.currentPhase = 'batalla';
+        this.currentTurn = 'enemy'; // Host starts battle phase
+        this.pushOnlineState(`${this.myUsername} ha colocado sus cartas. ¡Comienza la fase de batalla!`);
+      }
+    } else {
+      this.currentPhase = 'colocacion_enemy';
+      this.currentTurn = 'enemy';
+      this.log("Has colocado tus cartas. Turno del oponente para colocar sus cartas...");
+      setTimeout(() => {
+        this.runAiColocacion();
+      }, 1500);
+    }
+    this.cdr.detectChanges();
+  }
+
+  private async runAiColocacion() {
+    if (this.enemyHand.length < 2) return;
+    
+    // Select best for ATK and DEF
+    this.enemyHand.sort((a, b) => b.attack - a.attack);
+    const card0 = this.enemyHand.shift()!;
+    
+    this.enemyHand.sort((a, b) => b.defense - a.defense);
+    const card1 = this.enemyHand.shift()!;
+    
+    const multiplier = this.difficulty === 'facil' ? 0.7 : (this.difficulty === 'dificil' ? 1.3 : 1.0);
+    
+    this.enemyField[0] = {
+      card: card0,
+      position: 'ATK',
+      hasAttacked: false,
+      abilityUsed: false,
+      currentHp: Math.round(card0.hp * multiplier),
+      currentAtk: Math.round(card0.attack * multiplier),
+      currentDef: Math.round(card0.defense * multiplier)
+    };
+    
+    this.enemyField[1] = {
+      card: card1,
+      position: 'DEF',
+      hasAttacked: false,
+      abilityUsed: false,
+      currentHp: Math.round(card1.hp * multiplier),
+      currentAtk: Math.round(card1.attack * multiplier),
+      currentDef: Math.round(card1.defense * multiplier)
+    };
+    
+    this.audioService.playSynthSound('summon');
+    this.log(`El rival ha colocado sus cartas de Ataque (${card0.name}) y Defensa (${card1.name}).`);
+    
+    this.currentPhase = 'batalla';
+    this.currentTurn = 'player';
+    this.log("¡Ambos jugadores han colocado sus cartas! Comienza la fase de batalla. ¡Es tu turno!");
+    this.startTurn();
+    this.cdr.detectChanges();
+  }
+
   // --- ACTIONS ---
 
   selectHandCard(card: PokemonCard) {
-    if (!this.isMyTurn || this.currentPhase !== 'batalla') return;
+    if (!this.isMyTurn || (this.currentPhase !== 'batalla' && this.currentPhase !== 'colocacion_player' && this.currentPhase !== 'colocacion_enemy')) return;
     this.audioService.playClick();
     this.selectedFieldCard = null;
     this.selectedHandCard = this.selectedHandCard === card ? null : card;
@@ -831,7 +935,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   }
 
   onPlayerFieldClick(index: number) {
-    if (!this.isMyTurn || this.currentPhase !== 'batalla') return;
+    if (!this.isMyTurn || (this.currentPhase !== 'batalla' && this.currentPhase !== 'colocacion_player' && this.currentPhase !== 'colocacion_enemy')) return;
 
     const slot = this.myField[index];
     if (slot !== null) {
@@ -846,7 +950,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   }
 
   quickSummon(card: PokemonCard, index: number) {
-    if (!this.isMyTurn || this.currentPhase !== 'batalla') return;
+    if (!this.isMyTurn || (this.currentPhase !== 'batalla' && this.currentPhase !== 'colocacion_player' && this.currentPhase !== 'colocacion_enemy')) return;
     this.summonCard(card, index);
   }
 
@@ -876,12 +980,6 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       await this.pushOnlineState(`Convocación de ${card.name} en slot ${slotIndex === 0 ? 'ATK' : 'DEF'}.`);
     } else {
       this.checkVictoryOfflineOnline();
-    }
-
-    // Auto-End Turn if we summoned a defender and have no attackers that can declare combat
-    const canAttackNow = this.myField[0] !== null && !this.myField[0].hasAttacked;
-    if (!canAttackNow) {
-      setTimeout(() => this.autoEndTurn(), 1200);
     }
 
     this.cdr.detectChanges();
@@ -951,6 +1049,12 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
   onEnemyFieldClick(index: number) {
     if (!this.isDeclaringAttack()) return;
+
+    if (index === 0 && this.enemyField[1] !== null) {
+      alert("¡No puedes atacar al atacante enemigo mientras tenga un defensor activo (DEF) protegiéndolo!");
+      return;
+    }
+
     this.executeAttack(this.selectedFieldCard!, index);
   }
 
@@ -1027,16 +1131,25 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       const diff = attacker.currentAtk - assistance.power;
 
       if (diff > 0) {
-        this.log(`¡Victoria! ${target.card.name} es debilitado. Restamos la diferencia de ${diff} LP al oponente.`);
-        this.enemyLp = Math.max(0, this.enemyLp - diff);
-        this.destroyEnemyMonster(targetIdx);
+        const damage = Math.max(100, diff);
+        target.currentHp = Math.max(0, target.currentHp - damage);
+        this.log(`💥 ¡${attacker.card.name} inflige ${damage} de daño a la HP de ${target.card.name}! (HP restante: ${target.currentHp})`);
+        
+        if (target.currentHp <= 0) {
+          this.destroyEnemyMonster(targetIdx);
+        }
       } else if (diff < 0) {
-        const absDiff = Math.abs(diff);
-        this.log(`¡Rebote! El ataque es repelido. Tu Pokémon ${attacker.card.name} es debilitado. Sufres ${absDiff} daño LP.`);
-        this.myLp = Math.max(0, this.myLp - absDiff);
-        this.destroyPlayerMonster(attackerIdx);
+        const bounceDamage = Math.max(100, Math.abs(diff));
+        attacker.currentHp = Math.max(0, attacker.currentHp - bounceDamage);
+        this.log(`🛡️ ¡Rebote! El ataque es repelido. ${attacker.card.name} sufre ${bounceDamage} de daño. (HP restante: ${attacker.currentHp})`);
+        
+        if (attacker.currentHp <= 0) {
+          this.destroyPlayerMonster(attackerIdx);
+        }
       } else {
-        this.log(`¡Choque de fuerzas! Ambos Pokémon son debilitados en el impacto.`);
+        this.log(`¡Choque de fuerzas! Ambos Pokémon sufren daño crítico.`);
+        target.currentHp = 0;
+        attacker.currentHp = 0;
         this.destroyEnemyMonster(targetIdx);
         this.destroyPlayerMonster(attackerIdx);
       }
@@ -1083,6 +1196,21 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     this.audioService.playSynthSound('faint');
     this.myGraveyard.push(slot.card);
     this.myField[index] = null;
+
+    const lostLp = slot.card.hp;
+    this.myLp = Math.max(0, this.myLp - lostLp);
+    this.log(`💥 ¡Tu Pokémon ${slot.card.name} ha sido eliminado! Pierdes ${lostLp} LP.`);
+
+    if (this.myDrawCount < 3 && this.myDeck.length > 0) {
+      const drawn = this.myDeck.shift()!;
+      this.myHand.push(drawn);
+      this.myDrawCount++;
+      this.log(`📥 Robas de tu mazo de reserva (${this.myDrawCount}/3): ${drawn.name}.`);
+    } else if (this.myDrawCount >= 3) {
+      this.log(`⚠️ Has alcanzado el límite máximo de 3 robos de reserva.`);
+    } else {
+      this.log(`⚠️ Tu mazo de reserva está vacío.`);
+    }
   }
 
   private destroyEnemyMonster(index: number) {
@@ -1091,6 +1219,21 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     this.audioService.playSynthSound('faint');
     this.enemyGraveyard.push(slot.card);
     this.enemyField[index] = null;
+
+    const lostLp = slot.card.hp;
+    this.enemyLp = Math.max(0, this.enemyLp - lostLp);
+    this.log(`💥 ¡El Pokémon rival ${slot.card.name} ha sido eliminado! El oponente pierde ${lostLp} LP.`);
+
+    if (this.enemyDrawCount < 3 && this.enemyDeck.length > 0) {
+      const drawn = this.enemyDeck.shift()!;
+      this.enemyHand.push(drawn);
+      this.enemyDrawCount++;
+      this.log(`📥 El rival toma una carta de su mazo de reserva (${this.enemyDrawCount}/3).`);
+    } else if (this.enemyDrawCount >= 3) {
+      this.log(`⚠️ El rival ha alcanzado el límite máximo de 3 robos de reserva.`);
+    } else {
+      this.log(`⚠️ El mazo de reserva del rival está vacío.`);
+    }
   }
 
   // --- VICTORY LOGIC ---
@@ -1107,15 +1250,16 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const myRemaining = this.myHand.length + this.myField.filter(z => z !== null).length + this.myDeck.length;
-    const enemyRemaining = this.enemyHand.length + this.enemyField.filter(z => z !== null).length + this.enemyDeck.length;
+    // Si ya no quedan cartas utilizables en mano y campo, se pierde
+    const myRemaining = this.myHand.length + this.myField.filter(z => z !== null).length;
+    const enemyRemaining = this.enemyHand.length + this.enemyField.filter(z => z !== null).length;
 
     if (myRemaining === 0) {
-      await this.finishDuel(false, 'Te has quedado sin cartas en el combate.');
+      await this.finishDuel(false, 'Te has quedado sin cartas utilizables en mano y campo.');
       return;
     }
     if (enemyRemaining === 0) {
-      await this.finishDuel(true, 'El oponente se ha quedado sin cartas.');
+      await this.finishDuel(true, 'El oponente se ha quedado sin cartas utilizables en mano y campo.');
       return;
     }
   }
@@ -1167,24 +1311,8 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   // --- AI SIMULATION ---
 
   private async runAiTurn() {
-    this.log(`--- Turno del Rival (Fase de Robo) ---`);
+    this.log(`--- Turno del Rival ---`);
     await this.delay(1000);
-
-    // Draw
-    if (this.enemyDeck.length > 0) {
-      const drawn = this.enemyDeck.shift()!;
-      this.enemyHand.push(drawn);
-      this.log(`El rival roba una carta.`);
-    } else if (this.enemyGraveyard.length > 0) {
-      this.enemyDeck = [...this.enemyGraveyard];
-      this.enemyGraveyard = [];
-      this.shuffle(this.enemyDeck);
-      const drawn = this.enemyDeck.shift()!;
-      this.enemyHand.push(drawn);
-      this.log(`El rival recicla cementerio y roba.`);
-    }
-
-    await this.delay(1200);
 
     // AI Decision: Summon card if slot empty
     let summoned = false;
@@ -1231,24 +1359,6 @@ export class GameBoardComponent implements OnInit, OnDestroy {
       await this.delay(1200);
     }
 
-    // AI Skill activation
-    for (let i = 0; i < 2; i++) {
-      const slot = this.enemyField[i];
-      if (slot && !slot.abilityUsed && Math.random() > 0.4) {
-        slot.abilityUsed = true;
-        this.audioService.playSynthSound('victory');
-        const firstType = slot.card.types[0]?.toLowerCase() || 'normal';
-        let aiMsg = `Habilidad de ${slot.card.name} rival: `;
-        if (firstType === 'fire') { slot.currentAtk += 300; aiMsg += '+300 ATK.'; }
-        else if (firstType === 'water') { slot.currentDef += 300; aiMsg += '+300 DEF.'; }
-        else if (firstType === 'grass') { slot.currentHp += 400; aiMsg += '+400 HP.'; }
-        else if (firstType === 'electric') { if(this.enemyDeck.length>0) this.enemyHand.push(this.enemyDeck.shift()!); aiMsg += 'Robó 1 carta.'; }
-        else { this.enemyLp = Math.min(4000, this.enemyLp + 500); aiMsg += '+500 LP.'; }
-        this.log(aiMsg);
-        await this.delay(1200);
-      }
-    }
-
     // AI Attack
     const attacker = this.enemyField[0];
     if (attacker && attacker.position === 'ATK' && !attacker.hasAttacked) {
@@ -1279,16 +1389,25 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         const diff = attacker.currentAtk - assistance.power;
 
         if (diff > 0) {
-          this.log(`¡Tu ${pTarget.card.name} es debilitado! Sufres la diferencia de ${diff} daño a tus LP.`);
-          this.myLp = Math.max(0, this.myLp - diff);
-          this.destroyPlayerMonster(targetIdx);
+          const damage = Math.max(100, diff);
+          pTarget.currentHp = Math.max(0, pTarget.currentHp - damage);
+          this.log(`💥 ¡El rival inflige ${damage} de daño a la HP de tu ${pTarget.card.name}! (HP restante: ${pTarget.currentHp})`);
+          
+          if (pTarget.currentHp <= 0) {
+            this.destroyPlayerMonster(targetIdx);
+          }
         } else if (diff < 0) {
-          const absDiff = Math.abs(diff);
-          this.log(`¡Contraataque! El atacante del rival es debilitado por tu defensa. Rival sufre ${absDiff} daño LP.`);
-          this.enemyLp = Math.max(0, this.enemyLp - absDiff);
-          this.destroyEnemyMonster(0);
+          const bounceDamage = Math.max(100, Math.abs(diff));
+          attacker.currentHp = Math.max(0, attacker.currentHp - bounceDamage);
+          this.log(`🛡️ ¡Rebote! Repeles el ataque. El atacante rival ${attacker.card.name} sufre ${bounceDamage} de daño. (HP restante: ${attacker.currentHp})`);
+          
+          if (attacker.currentHp <= 0) {
+            this.destroyEnemyMonster(0);
+          }
         } else {
-          this.log(`¡Doble destrucción mutua!`);
+          this.log(`¡Choque de fuerzas! Ambos Pokémon sufren daño crítico.`);
+          pTarget.currentHp = 0;
+          attacker.currentHp = 0;
           this.destroyPlayerMonster(targetIdx);
           this.destroyEnemyMonster(0);
         }
@@ -1384,6 +1503,30 @@ export class GameBoardComponent implements OnInit, OnDestroy {
         specialAbility: 'Control Mental (Sube ATK/DEF)',
         rarity: 'Legendaria',
         description: 'Creado mediante ingeniería genética para ser el Pokémon definitivo.'
+      },
+      {
+        id: 143,
+        name: 'SNORLAX',
+        image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/143.png',
+        types: ['normal'],
+        attack: 500,
+        defense: 500,
+        hp: 2000,
+        specialAbility: 'Inmunidad (Robusto)',
+        rarity: 'Rara',
+        description: 'Su estómago puede digerir cualquier tipo de veneno.'
+      },
+      {
+        id: 94,
+        name: 'GENGAR',
+        image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png',
+        types: ['psychic'],
+        attack: 750,
+        defense: 450,
+        hp: 1000,
+        specialAbility: 'Cuerpo Maldito (Esquivar)',
+        rarity: 'Rara',
+        description: 'Se esconde en las sombras de la gente por la noche.'
       }
     ];
   }
