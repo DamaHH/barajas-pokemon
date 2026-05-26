@@ -86,12 +86,9 @@ import { AudioService } from '../../core/services/audio/audio.service';
                   Safari Balls listos: <span style="font-weight: 900; color: var(--poke-red); font-size: 1.25rem;">{{ inv?.sobres_disponibles || 0 }}</span>
                 </div>
                 
-                <button class="btn-royal-crimson" *ngIf="(inv?.sobres_disponibles || 0) > 0" (click)="goTo('/gacha')" 
+                <button class="btn-royal-crimson" (click)="goTo('/gacha')" 
                         style="width: 100%; font-size: 0.85rem; padding: 0.65rem; background: var(--poke-red); border-color: var(--poke-dark);">
                   🌾 Ir a la Hierba Alta
-                </button>
-                <button class="btn" *ngIf="(inv?.sobres_disponibles || 0) === 0" style="width: 100%; cursor: not-allowed;" disabled>
-                  Sin Energía de Safari
                 </button>
 
                 <!-- Pokéball styled energy progress -->
