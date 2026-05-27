@@ -51,7 +51,7 @@ export interface FieldSlot {
           <div class="rewards-boxAltar" *ngIf="isWinner && !rewardProcessed" style="background: #f0fdf4; border: 3px solid var(--poke-dark); box-shadow: 3px 3px 0 var(--poke-dark); border-radius: 12px; margin-bottom: 1.5rem; padding: 1rem;">
             <h3 style="font-family: var(--font-title); font-weight: 900; color: #16a34a; margin-bottom: 0.25rem; text-transform: uppercase;">Recompensas Obtenidas</h3>
             <p style="font-weight: bold;">+{{ recargasEarned }} PokéCoins de Oro</p>
-            <p *ngIf="packEarned" class="pulse-anim" style="color: var(--poke-blue); font-weight: 900;">¡Boleto de Safari Adicional Desbloqueado!</p>
+            <p *ngIf="packEarned" class="pulse-anim" style="color: var(--poke-blue); font-weight: 900;">¡Sobre Adicional Desbloqueado!</p>
           </div>
 
           <button (click)="exitDuel()" class="btn-royal-gold" style="font-size: 1.1rem; padding: 0.75rem 3rem;">
@@ -834,10 +834,12 @@ export class GameBoardComponent implements OnInit, OnDestroy {
 
     if (this.currentTurn === 'player') {
       this.currentPhase = 'batalla';
+      this.myField.forEach(s => { if (s) s.hasAttacked = false; });
       this.log('⚔️ Tu turno. Puedes convocar cartas o declarar tu ataque.');
       this.cdr.detectChanges();
     } else {
       this.currentPhase = 'batalla';
+      this.enemyField.forEach(s => { if (s) s.hasAttacked = false; });
       if (!this.onlineMode) {
         this.runAiTurn();
       } else {
@@ -864,6 +866,7 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     this.selectedTargetCard = null;
 
     this.myField.forEach(s => { if (s) s.hasAttacked = false; });
+    this.enemyField.forEach(s => { if (s) s.hasAttacked = false; });
     this.currentTurn = 'enemy';
     this.currentPhase = 'batalla';
 
@@ -1308,6 +1311,8 @@ export class GameBoardComponent implements OnInit, OnDestroy {
   // --- AI SIMULATION ---
 
   private async runAiTurn() {
+    this.audioService.resume();
+    this.enemyField.forEach(s => { if (s) s.hasAttacked = false; });
     this.opponentStatusMessage = 'Iniciando turno...';
     this.log(`--- Turno del Rival ---`);
     await this.delay(1200);

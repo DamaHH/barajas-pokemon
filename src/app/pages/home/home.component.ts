@@ -71,30 +71,30 @@ import { AudioService } from '../../core/services/audio/audio.service';
               </div>
             </div>
 
-            <!-- Tall Grass Safari Tracker Panel -->
+            <!-- Shop Booster Pack Panel -->
             <div class="altar-panel" style="padding: 1.5rem; border-color: var(--poke-blue); box-shadow: 6px 6px 0px var(--poke-blue);">
               <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-blue); text-transform: uppercase; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px;">
-                Capturas en Safari
+                Tienda de Sobres
               </h3>
               
               <div *ngIf="loading" style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 1rem;">
-                Sincronizando radar...
+                Cargando tienda...
               </div>
               
               <div *ngIf="!loading" style="text-align: center;">
                 <div style="font-size: 0.9rem; margin-bottom: 0.75rem; font-weight: bold;">
-                  Safari Balls listos: <span style="font-weight: 900; color: var(--poke-red); font-size: 1.25rem;">{{ inv?.sobres_disponibles || 0 }}</span>
+                  Sobres listos: <span style="font-weight: 900; color: var(--poke-red); font-size: 1.25rem;">{{ inv?.sobres_disponibles || 0 }}</span>
                 </div>
                 
                 <button class="btn-royal-crimson" (click)="goTo('/gacha')" 
                         style="width: 100%; font-size: 0.85rem; padding: 0.65rem; background: var(--poke-red); border-color: var(--poke-dark);">
-                  🌾 Ir a la Hierba Alta
+                  🛍️ Ir a la Tienda
                 </button>
 
                 <!-- Pokéball styled energy progress -->
                 <div style="margin-top: 1.25rem; text-align: left;">
                   <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: bold; color: #64748b; margin-bottom: 0.4rem;">
-                    <span>Cargas del Safari</span>
+                    <span>Progreso de Sobre</span>
                     <span>{{ inv?.sobres_disponibles || 0 }} / 3</span>
                   </div>
                   <div class="pokeball-gauge" style="height: 12px; border-radius: 6px;">
@@ -198,7 +198,7 @@ import { AudioService } from '../../core/services/audio/audio.service';
             <p *ngIf="tutorialStep === 1">¡Hola, te doy la bienvenida a <strong>Barajas Pokémon</strong>! Soy tu asistente virtual. Te daré un breve recorrido para que aprendas a jugar rápidamente.</p>
             <p *ngIf="tutorialStep === 2">En la derecha tienes el <strong>Simulador IA</strong> y los <strong>Combates en Línea</strong>. El simulador te permite pelear localmente con la máquina. "Combates en Línea" te conecta con jugadores en tiempo real.</p>
             <p *ngIf="tutorialStep === 3"><strong>¡Punto clave!</strong> Antes de batallar, entra a <strong>Forjar Mazo Activo</strong> para elegir las 7 cartas que usarás. Es requisito indispensable tener un mazo guardado para poder iniciar.</p>
-            <p *ngIf="tutorialStep === 4">Para obtener más cartas, ve al recuadro de la izquierda: <strong>Búsqueda en Safari</strong>. Utiliza tus Safari Balls disponibles para sacudir los matorrales de la hierba alta y capturar nuevos Pokémon.</p>
+            <p *ngIf="tutorialStep === 4">Para obtener más cartas, ve al recuadro de la izquierda: <strong>Tienda de Sobres</strong>. Utiliza tus sobres disponibles o canjea PokéCoins por sobres especiales con mejores estadísticas.</p>
             <p *ngIf="tutorialStep === 5">Finalmente, en <strong>Mi Colección</strong> podrás ver todo tu catálogo de cartas obtenidas y en <strong>Bitácora</strong> auditar tus estadísticas de victorias. ¡Mucha suerte en la arena!</p>
           </div>
 
@@ -242,8 +242,8 @@ import { AudioService } from '../../core/services/audio/audio.service';
             </div>
 
             <div>
-              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">5. PokéCoins y Recargas de Safari</h3>
-              <p>Ganarás 50 PokéCoins por victoria contra la IA y 100 PokéCoins por victoria en línea. Para canjearlos por más intentos de captura, ve a la sección <strong>Hierba Alta (Safari)</strong>; en la parte inferior podrás recargar 1 Safari Ball a cambio de 100 PokéCoins. ¡Así nunca te quedarás sin cartas!</p>
+              <h3 style="font-family: var(--font-title); font-weight: 900; font-size: 1rem; color: var(--poke-red); margin-bottom: 0.3rem;">5. PokéCoins y Tienda de Sobres</h3>
+              <p>Ganarás 50 PokéCoins por victoria contra la IA y 100 PokéCoins por victoria en línea. Utiliza tus monedas en la <strong>Tienda de Sobres</strong> para adquirir cualquiera de las 3 opciones disponibles: el Sobre Clásico (100 coins), el Sobre Épico (180 coins) con estadísticas mejoradas (1.2x) y mejores probabilidades, o el Sobre Legendario (300 coins) con estadísticas superiores (1.5x) y un Pokémon Épico o Legendario garantizado.</p>
             </div>
           </div>
 

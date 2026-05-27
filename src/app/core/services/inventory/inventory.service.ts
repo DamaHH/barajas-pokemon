@@ -113,6 +113,86 @@ export class InventoryService {
     return cardsToReturn;
   }
 
+  async openPremiumPack(packType: 'clasico' | 'epico' | 'legendario'): Promise<PokemonCard[]> {
+    const inv = await this.getInventory();
+    const cost = packType === 'clasico' ? 100 : (packType === 'epico' ? 180 : 300);
+
+    if (inv.recargas < cost) {
+      throw new Error(`Saldo de PokéCoins insuficiente. Cuesta ${cost} PokéCoins.`);
+    }
+
+    // Obtener 5 cartas nuevas
+    const newCards = await this.pokeapi.getRandomPokemonCards(5);
+
+    // Aplicar multiplicadores y rarezas
+    if (packType === 'epico') {
+      newCards.forEach(card => {
+        card.attack = Math.round(card.attack * 1.2);
+        card.defense = Math.round(card.defense * 1.2);
+        card.hp = Math.round(card.hp * 1.2);
+        card.maxHp = card.hp;
+        // Promoción de rareza
+        if (card.rarity === 'Común') card.rarity = 'Rara';
+        else if (card.rarity === 'Infrecuente') card.rarity = 'Épica';
+        else if (card.rarity === 'Rara') card.rarity = 'Épica';
+        else if (card.rarity === 'Épica') card.rarity = 'Legendaria';
+      });
+    } else if (packType === 'legendario') {
+      newCards.forEach(card => {
+        card.attack = Math.round(card.attack * 1.5);
+        card.defense = Math.round(card.defense * 1.5);
+        card.hp = Math.round(card.hp * 1.5);
+        card.maxHp = card.hp;
+        // Promoción a mínimo Épica
+        if (card.rarity === 'Común' || card.rarity === 'Infrecuente' || card.rarity === 'Rara') {
+          card.rarity = 'Épica';
+        }
+      });
+      // Forzar al menos una Legendaria
+      const luckyIndex = Math.floor(Math.random() * 5);
+      newCards[luckyIndex].rarity = 'Legendaria';
+      newCards[luckyIndex].attack = Math.round(newCards[luckyIndex].attack * 1.25);
+      newCards[luckyIndex].defense = Math.round(newCards[luckyIndex].defense * 1.25);
+      newCards[luckyIndex].hp = Math.round(newCards[luckyIndex].hp * 1.25);
+      newCards[luckyIndex].maxHp = newCards[luckyIndex].hp;
+    }
+
+    const { data: userAuth } = await this.supabase.auth.getUser();
+    if (!userAuth.user) throw new Error("No autenticado");
+
+    const updatedCards = [...inv.cartas];
+    const cardsToReturn: PokemonCard[] = [];
+
+    for (const newCard of newCards) {
+      // Buscar si el jugador ya tiene este Pokémon en su inventario con la misma rareza
+      const existingIdx = updatedCards.findIndex(c => c.name.toLowerCase() === newCard.name.toLowerCase() && c.rarity === newCard.rarity);
+      if (existingIdx >= 0) {
+        const existingCard = updatedCards[existingIdx];
+        existingCard.level = (existingCard.level || 1) + 1;
+        const multiplier = packType === 'epico' ? 1.2 : (packType === 'legendario' ? 1.5 : 1.0);
+        existingCard.attack = (existingCard.attack || 0) + Math.round(15 * multiplier);
+        existingCard.defense = (existingCard.defense || 0) + Math.round(10 * multiplier);
+        existingCard.hp = (existingCard.hp || 0) + Math.round(40 * multiplier);
+        existingCard.maxHp = existingCard.hp;
+        cardsToReturn.push({ ...existingCard });
+      } else {
+        newCard.level = 1;
+        newCard.maxHp = newCard.hp;
+        updatedCards.push(newCard);
+        cardsToReturn.push(newCard);
+      }
+    }
+
+    await this.supabase.client.from('inventario')
+      .update({
+        cartas: updatedCards,
+        recargas: inv.recargas - cost
+      })
+      .eq('id_usuario', userAuth.user.id);
+
+    return cardsToReturn;
+  }
+
   async buyPackWithCoins(): Promise<void> {
     const inv = await this.getInventory();
     const { data: userAuth } = await this.supabase.auth.getUser();

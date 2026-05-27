@@ -46,13 +46,13 @@ import { AudioService } from '../../core/services/audio/audio.service';
                 Adquirir Nuevas Cartas
               </h2>
               <p style="color: #64748b; font-size: 0.85rem; font-weight: 600; max-width: 550px; margin: 0 auto 1rem auto; line-height: 1.5;">
-                Abre sobres de expansión para obtener un lote de 5 cartas Pokémon para tu colección. Puedes usar tus sobres disponibles o comprar nuevos con PokéCoins.
+                Elige y abre sobres de expansión para obtener un lote de 5 cartas Pokémon para tu colección. Puedes usar tus sobres en stock o canjear PokéCoins por sobres especiales con estadísticas superiores.
               </p>
               
               <!-- Energy Gauge Pokéball Style -->
               <div style="max-width: 400px; margin: 0 auto; padding: 0.75rem 1rem; background: var(--poke-gray-bg); border: 3px solid var(--poke-dark); border-radius: 12px; box-shadow: 3px 3px 0 var(--poke-dark);">
                 <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 900; color: var(--poke-dark); margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.5px;">
-                  <span>Sobres Disponibles</span>
+                  <span>Sobres Disponibles en Stock</span>
                   <span>{{ inv?.sobres_disponibles || 0 }} Disponibles</span>
                 </div>
                 <div class="pokeball-gauge" style="height: 14px; border-radius: 7px; border: 2px solid var(--poke-dark); background: #e2e8f0; overflow: hidden; position: relative;">
@@ -61,31 +61,65 @@ import { AudioService } from '../../core/services/audio/audio.service';
               </div>
             </div>
 
-            <!-- Beautiful Booster Pack Card -->
-            <div class="booster-pack-card" (click)="abrirSobre()">
-              <div class="booster-pack-shine"></div>
-              <div class="booster-pack-logo">POKÉMON DUELS</div>
-              <div class="booster-pack-art-container">
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png" class="booster-pack-art" alt="Charizard Pack Art">
+            <!-- Row of 3 Packs -->
+            <div style="display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; width: 100%;">
+              
+              <!-- 1. CLASICO PACK -->
+              <div class="booster-pack-card" style="background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #991b1b 100%); border-color: #f59e0b;" (click)="abrirSobreGratis()">
+                <div class="booster-pack-shine"></div>
+                <div class="booster-pack-logo" style="color: #f59e0b;">CLÁSICO</div>
+                <div class="booster-pack-art-container" style="border-color: #f59e0b;">
+                  <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png" class="booster-pack-art" alt="Charizard">
+                </div>
+                <div style="font-size: 0.8rem; font-weight: 800; color: #fff; text-shadow: 1px 1px 2px #000; margin: 0.5rem 0;">Stats normal | Raros estándar</div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;" (click)="$event.stopPropagation()">
+                  <button class="btn-royal-gold" style="font-size: 0.8rem; padding: 0.4rem; width: 100%; border-radius: 8px;"
+                          [disabled]="(inv?.sobres_disponibles || 0) <= 0 || loading"
+                          (click)="abrirSobreGratis()">
+                    🔓 Abrir gratis ({{ inv?.sobres_disponibles || 0 }} stock)
+                  </button>
+                  <button class="btn-royal-crimson" style="font-size: 0.8rem; padding: 0.4rem; width: 100%; background: #1e293b; border-color: var(--poke-dark); border-radius: 8px;"
+                          [disabled]="(inv?.recargas || 0) < 100 || loading"
+                          (click)="comprarSobrePremium('clasico')">
+                    🪙 Comprar (100 Coins)
+                  </button>
+                </div>
               </div>
-              <div class="booster-pack-footer">SOBRE DE EXPANSIÓN</div>
-            </div>
 
-            <!-- Action buttons -->
-            <div style="display: flex; flex-direction: column; gap: 0.75rem; align-items: center; width: 100%; max-width: 450px;">
-              <button class="btn-royal-gold" 
-                      [disabled]="(inv?.sobres_disponibles || 0) <= 0 || loading"
-                      (click)="abrirSobre()" 
-                      style="font-size: 1.1rem; padding: 0.75rem 3rem; width: 100%; box-shadow: 4px 4px 0 var(--poke-dark);">
-                🔓 Abrir Sobre ({{ inv?.sobres_disponibles || 0 }} en stock)
-              </button>
+              <!-- 2. EPICO PACK -->
+              <div class="booster-pack-card" style="background: linear-gradient(135deg, #311042 0%, #6b21a8 50%, #4c1d95 100%); border-color: #c084fc;" (click)="comprarSobrePremium('epico')">
+                <div class="booster-pack-shine"></div>
+                <div class="booster-pack-logo" style="color: #c084fc;">ÉPICO</div>
+                <div class="booster-pack-art-container" style="border-color: #c084fc;">
+                  <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png" class="booster-pack-art" alt="Mewtwo">
+                </div>
+                <div style="font-size: 0.8rem; font-weight: 800; color: #fff; text-shadow: 1px 1px 2px #000; margin: 0.5rem 0;">Stats +20% (1.2x) | Raros extra</div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;" (click)="$event.stopPropagation()">
+                  <button class="btn-royal-crimson" style="font-size: 0.8rem; padding: 0.4rem; width: 100%; background: #c084fc; border-color: var(--poke-dark); border-radius: 8px; color: #000;"
+                          [disabled]="(inv?.recargas || 0) < 180 || loading"
+                          (click)="comprarSobrePremium('epico')">
+                    🪙 Comprar (180 Coins)
+                  </button>
+                </div>
+              </div>
 
-              <button class="btn-royal-crimson" 
-                      [disabled]="(inv?.recargas || 0) < 100 || loading"
-                      (click)="comprarSobre()" 
-                      style="font-size: 1rem; padding: 0.6rem 2rem; width: 100%; background: var(--poke-red); border-color: var(--poke-dark); box-shadow: 4px 4px 0 var(--poke-dark);">
-                🪙 Comprar Sobre (100 Coins)
-              </button>
+              <!-- 3. LEGENDARIO PACK -->
+              <div class="booster-pack-card" style="background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #047857 100%); border-color: #fcd34d; box-shadow: 0 0 15px rgba(252, 211, 77, 0.4), 0 0 0 2px #000;" (click)="comprarSobrePremium('legendario')">
+                <div class="booster-pack-shine"></div>
+                <div class="booster-pack-logo" style="color: #fcd34d; animation: pulse 0.5s infinite alternate;">LEGENDARIO</div>
+                <div class="booster-pack-art-container" style="border-color: #fcd34d;">
+                  <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/384.png" class="booster-pack-art" alt="Rayquaza">
+                </div>
+                <div style="font-size: 0.8rem; font-weight: 800; color: #fff; text-shadow: 1px 1px 2px #000; margin: 0.5rem 0;">Stats +50% (1.5x) | Legendario OK!</div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;" (click)="$event.stopPropagation()">
+                  <button class="btn-royal-gold" style="font-size: 0.8rem; padding: 0.4rem; width: 100%; border-radius: 8px; background: #fbbf24; border-color: var(--poke-dark);"
+                          [disabled]="(inv?.recargas || 0) < 300 || loading"
+                          (click)="comprarSobrePremium('legendario')">
+                    🪙 Comprar (300 Coins)
+                  </button>
+                </div>
+              </div>
+
             </div>
 
           </div>
@@ -95,10 +129,13 @@ import { AudioService } from '../../core/services/audio/audio.service';
             
             <div style="position: relative; width: 240px; height: 360px; margin: 0 auto 2.5rem auto; display: flex; align-items: center; justify-content: center;">
               <!-- Large shaking card pack -->
-              <div class="booster-pack-card shaking" style="cursor: default; pointer-events: none;">
-                <div class="booster-pack-logo">ABRIENDO...</div>
-                <div class="booster-pack-art-container">
-                  <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png" class="booster-pack-art" alt="Charizard Pack Art" style="animation: none;">
+              <div class="booster-pack-card shaking" 
+                   [style.background]="selectedPackType === 'clasico' ? 'linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #991b1b 100%)' : (selectedPackType === 'epico' ? 'linear-gradient(135deg, #311042 0%, #6b21a8 50%, #4c1d95 100%)' : 'linear-gradient(135deg, #064e3b 0%, #059669 50%, #047857 100%)')"
+                   [style.border-color]="selectedPackType === 'clasico' ? '#f59e0b' : (selectedPackType === 'epico' ? '#c084fc' : '#fcd34d')"
+                   style="cursor: default; pointer-events: none;">
+                <div class="booster-pack-logo" [style.color]="selectedPackType === 'clasico' ? '#f59e0b' : (selectedPackType === 'epico' ? '#c084fc' : '#fcd34d')">{{ selectedPackType.toUpperCase() }}</div>
+                <div class="booster-pack-art-container" [style.border-color]="selectedPackType === 'clasico' ? '#f59e0b' : (selectedPackType === 'epico' ? '#c084fc' : '#fcd34d')">
+                  <img [src]="selectedPackType === 'clasico' ? 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png' : (selectedPackType === 'epico' ? 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png' : 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/384.png')" class="booster-pack-art" alt="Pack Art" style="animation: none;">
                 </div>
                 <div class="booster-pack-footer">¡LOTE DE 5 CARTAS!</div>
               </div>
@@ -339,6 +376,7 @@ export class GachaComponent implements OnInit {
   openingState = 0; // 0 = default, 1 = scanning, 2 = revealed
   loading = false;
   isMuted = false;
+  selectedPackType: 'clasico' | 'epico' | 'legendario' = 'clasico';
 
   private inventoryService = inject(InventoryService);
   private audioService = inject(AudioService);
@@ -373,9 +411,10 @@ export class GachaComponent implements OnInit {
     this.audioService.playClick();
   }
 
-  async abrirSobre() {
+  async abrirSobreGratis() {
     if (!this.inv || this.inv.sobres_disponibles <= 0 || this.openingState !== 0) return;
     
+    this.selectedPackType = 'clasico';
     this.openingState = 1;
     this.audioService.playClick();
     this.audioService.resume(); // Ensure AudioContext is active
@@ -403,20 +442,38 @@ export class GachaComponent implements OnInit {
     }
   }
 
-  async comprarSobre() {
-    if (!this.inv || this.inv.recargas < 100) return;
+  async comprarSobrePremium(packType: 'clasico' | 'epico' | 'legendario') {
+    if (!this.inv || this.openingState !== 0) return;
+    const cost = packType === 'clasico' ? 100 : (packType === 'epico' ? 180 : 300);
+    if (this.inv.recargas < cost) {
+      alert(`Saldo de PokéCoins insuficiente. Cuesta ${cost} PokéCoins.`);
+      return;
+    }
+
+    this.selectedPackType = packType;
+    this.openingState = 1;
     this.audioService.playClick();
     this.audioService.resume(); // Ensure AudioContext is active
-    this.loading = true;
+    this.cdr.detectChanges();
+
+    // Sound of pack rip/card slide
+    this.audioService.playSynthSound('draw');
 
     try {
-      await this.inventoryService.buyPackWithCoins();
-      await this.loadInventory();
-      alert("📦 Sobre comprado con éxito.");
-    } catch(e: any) {
-      alert("Error al comprar: " + e.message);
-    } finally {
-      this.loading = false;
+      this.openedCards = await this.inventoryService.openPremiumPack(packType);
+      
+      // Simulate opening (2.2 seconds)
+      setTimeout(() => {
+        this.audioService.playSynthSound('summon');
+        this.openingState = 2;
+        this.loadInventory(); // Reload in background
+        this.cdr.detectChanges();
+      }, 2200);
+
+    } catch (e: any) {
+      console.error(e);
+      alert("Error al comprar/abrir el sobre: " + e.message);
+      this.openingState = 0;
       this.cdr.detectChanges();
     }
   }

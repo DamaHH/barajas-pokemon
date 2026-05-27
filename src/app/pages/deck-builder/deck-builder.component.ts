@@ -90,7 +90,7 @@ import { AudioService } from '../../core/services/audio/audio.service';
             </h2>
 
             <div *ngIf="collection.length === 0" style="text-align: center; padding: 4rem; color: var(--pokedex-steel-light);">
-              <p>No se detectan Pokémon registrados. Escanea la Hierba Alta para capturar.</p>
+              <p>No se detectan Pokémon registrados. Ve a la Tienda de Sobres para abrir sobres.</p>
             </div>
 
             <!-- Scrollable list of cards in collection -->
