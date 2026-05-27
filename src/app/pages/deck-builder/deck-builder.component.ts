@@ -65,9 +65,12 @@ import { AudioService } from '../../core/services/audio/audio.service';
                       {{ card.description }}
                     </div>
 
-                    <div class="card-stats-ygo">
-                      <span style="color: var(--poke-red);">ATK: {{ card.attack }}</span>
-                      <span style="color: var(--poke-blue);">DEF: {{ card.defense }}</span>
+                    <div class="card-stats-ygo" style="display: flex; flex-direction: column; gap: 2px; align-items: center; padding-top: 4px;">
+                      <div style="display: flex; gap: 12px; justify-content: center; font-weight: 900;">
+                        <span style="color: var(--poke-red);">ATK: {{ card.attack }}</span>
+                        <span style="color: var(--poke-blue);">DEF: {{ card.defense }}</span>
+                      </div>
+                      <span style="color: #16a34a; font-weight: 900; font-size: 0.75rem;">HP: {{ card.hp }}</span>
                     </div>
 
                   </div>
@@ -115,9 +118,12 @@ import { AudioService } from '../../core/services/audio/audio.service';
                       {{ card.description }}
                     </div>
 
-                    <div class="card-stats-ygo">
-                      <span style="color: var(--poke-red);">ATK: {{ card.attack }}</span>
-                      <span style="color: var(--poke-blue);">DEF: {{ card.defense }}</span>
+                    <div class="card-stats-ygo" style="display: flex; flex-direction: column; gap: 2px; align-items: center; padding-top: 4px;">
+                      <div style="display: flex; gap: 12px; justify-content: center; font-weight: 900;">
+                        <span style="color: var(--poke-red);">ATK: {{ card.attack }}</span>
+                        <span style="color: var(--poke-blue);">DEF: {{ card.defense }}</span>
+                      </div>
+                      <span style="color: #16a34a; font-weight: 900; font-size: 0.75rem;">HP: {{ card.hp }}</span>
                     </div>
 
                   </div>

@@ -26,19 +26,49 @@ export class InventoryService {
       .eq('id_usuario', userId)
       .single();
 
+    const gengarLegendary: PokemonCard = {
+      instanceId: 'gengar-legendario-unique-id',
+      id: 94,
+      name: 'GENGAR LEGENDARIO',
+      image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png',
+      types: ['ghost', 'poison'],
+      attack: 1600,
+      defense: 1000,
+      hp: 2000,
+      maxHp: 2000,
+      specialAbility: 'Control Mental (Sube ATK/DEF)',
+      rarity: 'Legendaria',
+      description: 'Edición Legendaria Limitada. Se esconde en las sombras de la gente por la noche y absorbe su calor.',
+      level: 1
+    };
+
     if (error || !data) {
-      // Create new inventory with 3 free packs and 0 coins
+      // Create new inventory with 3 free packs, Gengar Legendary, and 150 coins
       const newInv = {
         id_usuario: userId,
-        cartas: [],
+        cartas: [gengarLegendary],
         sobres_disponibles: 3,
         recargas: 150 // Darles 150 PokéCoins iniciales gratis
       };
       await this.supabase.client.from('inventario').insert(newInv);
-      return { cartas: [], sobres_disponibles: 3, recargas: 150 };
+      return { cartas: [gengarLegendary], sobres_disponibles: 3, recargas: 150 };
     }
 
-    return data as Inventory;
+    // Si ya existe inventario, verificar si tiene a Gengar Legendario
+    const currentCartas: PokemonCard[] = data.cartas || [];
+    const hasGengar = currentCartas.some(c => c.id === 94 && c.rarity === 'Legendaria');
+    if (!hasGengar) {
+      currentCartas.push(gengarLegendary);
+      await this.supabase.client.from('inventario')
+        .update({ cartas: currentCartas })
+        .eq('id_usuario', userId);
+    }
+
+    return {
+      cartas: currentCartas,
+      sobres_disponibles: data.sobres_disponibles,
+      recargas: data.recargas
+    };
   }
 
   async openPack(): Promise<PokemonCard[]> {

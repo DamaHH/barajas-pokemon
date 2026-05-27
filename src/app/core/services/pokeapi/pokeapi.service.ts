@@ -58,15 +58,24 @@ export class PokeapiService {
       if (totalStats > 400 && totalStats <= 480) rarity = 'Épica';
       if (totalStats > 480) rarity = 'Legendaria';
 
-      const hpCalculated = hpBase * 10;
+      let statMultiplier = 1.0;
+      if (rarity === 'Infrecuente') statMultiplier = 1.15;
+      if (rarity === 'Rara') statMultiplier = 1.30;
+      if (rarity === 'Épica') statMultiplier = 1.50;
+      if (rarity === 'Legendaria') statMultiplier = 1.80;
+
+      const hpCalculated = Math.round(hpBase * 10 * statMultiplier);
+      const attackCalculated = Math.round(atkBase * 8 * statMultiplier);
+      const defenseCalculated = Math.round(defBase * 6 * statMultiplier);
+
       return {
         instanceId: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Math.random().toString(36).substring(2),
         id: data.id,
         name: data.name.toUpperCase(),
         image: data.sprites.other['official-artwork'].front_default || data.sprites.front_default,
         types: data.types.map((t: any) => t.type.name),
-        attack: atkBase * 8,
-        defense: defBase * 6,
+        attack: attackCalculated,
+        defense: defenseCalculated,
         hp: hpCalculated,
         maxHp: hpCalculated,
         specialAbility: this.getSpecialAbilityByType(data.types[0].type.name),

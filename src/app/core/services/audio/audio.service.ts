@@ -26,12 +26,12 @@ export class AudioService {
           this.audioCtx.resume();
         }
         if (this.audioCtx && this.audioCtx.state === 'running') {
-          document.removeEventListener('click', resumeAudio);
-          document.removeEventListener('keydown', resumeAudio);
+          document.removeEventListener('click', resumeAudio, { capture: true });
+          document.removeEventListener('keydown', resumeAudio, { capture: true });
         }
       };
-      document.addEventListener('click', resumeAudio);
-      document.addEventListener('keydown', resumeAudio);
+      document.addEventListener('click', resumeAudio, { capture: true });
+      document.addEventListener('keydown', resumeAudio, { capture: true });
     }
   }
 
@@ -49,6 +49,14 @@ export class AudioService {
   toggleMute(): boolean {
     this.setMute(!this.isMuted);
     return this.isMuted;
+  }
+
+  resume() {
+    if (!this.isBrowser || this.isMuted) return;
+    const ctx = this.getAudioContext();
+    if (ctx && ctx.state === 'suspended') {
+      ctx.resume().catch(e => console.warn(e));
+    }
   }
 
   private getAudioContext(): AudioContext | null {
