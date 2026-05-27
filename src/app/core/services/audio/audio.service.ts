@@ -16,11 +16,19 @@ export class AudioService {
       this.isMuted = localStorage.getItem('pokedex_audio_muted') === 'true';
       
       const resumeAudio = () => {
+        if (!this.audioCtx) {
+          const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+          if (AudioContextClass) {
+            this.audioCtx = new AudioContextClass();
+          }
+        }
         if (this.audioCtx && this.audioCtx.state === 'suspended') {
           this.audioCtx.resume();
         }
-        document.removeEventListener('click', resumeAudio);
-        document.removeEventListener('keydown', resumeAudio);
+        if (this.audioCtx && this.audioCtx.state === 'running') {
+          document.removeEventListener('click', resumeAudio);
+          document.removeEventListener('keydown', resumeAudio);
+        }
       };
       document.addEventListener('click', resumeAudio);
       document.addEventListener('keydown', resumeAudio);

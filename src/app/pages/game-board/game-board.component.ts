@@ -1100,8 +1100,8 @@ export class GameBoardComponent implements OnInit, OnDestroy {
     
     let dmg = Math.floor((baseAttack * multiplier) - effDefense);
     
-    // Daño mínimo garantizado del 15% de la vida base del rival
-    const minDmg = Math.floor(defender.card.hp * 0.15) || 100;
+    // Daño mínimo garantizado plano de 100 puntos
+    const minDmg = 100;
     if (dmg < minDmg) dmg = minDmg;
 
     return { dmg, multiplier };
